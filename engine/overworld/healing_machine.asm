@@ -46,7 +46,7 @@ AnimateHealingMachine:
 .next
 	ld a, MUSIC_PKMN_HEALED
 	ld [wNewSoundID], a
-	call PlaySound
+	call PlaySound ; NOTE: Intentionally treating this as a sound effect, as it's waited on below
 	ld d, $28
 	call FlashSprite8Times
 .waitLoop2

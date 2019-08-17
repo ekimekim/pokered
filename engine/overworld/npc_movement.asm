@@ -167,7 +167,7 @@ PewterMovementScript_WalkToMuseum:
 	ld [wAudioSavedROMBank], a
 	ld a, MUSIC_MUSEUM_GUY
 	ld [wNewSoundID], a
-	call PlaySound
+	call PlaySoundMusic
 	ld a, [wSpriteIndex]
 	swap a
 	ld [wNPCMovementScriptSpriteOffset], a
@@ -223,7 +223,7 @@ PewterMovementScript_WalkToGym:
 	ld [wAudioSavedROMBank], a
 	ld a, MUSIC_MUSEUM_GUY
 	ld [wNewSoundID], a
-	call PlaySound
+	call PlaySoundMusic
 	ld a, [wSpriteIndex]
 	swap a
 	ld [wNPCMovementScriptSpriteOffset], a
