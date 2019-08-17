@@ -187,3 +187,29 @@ GetSpriteScreenXY:
 	and $f0
 	ld [de], a  ; c1xb (x)
 	ret
+
+
+; For each sprite in OAM, fix flags by copying DMG palette flag (0-1) in bit 4
+; to CGB palette value (0-7) in bits 0-2. This means clearing bits 1 and 2,
+; and copying bit 4 to bit 0.
+FixOAMDataCGBFlags:
+	ld B, 40
+	ld HL, wOAMBuffer + 3 ; HL = address of flags of first sprite
+.loop
+	ld A, $f0
+	and [HL] ; A = top half of [HL]
+	ld C, A
+	and %00010000
+	swap A ; A = 0 or 1 depending on bit 4 of [HL]
+	or C ; re-introduce original top half of [HL]
+	; now A = 7654___4 from bits of [HL], with _ being 0
+	ld [HL+], A ; and write it back
+	; inc HL 3 more times to bring it to the next sprite.
+	inc HL
+	inc HL
+	inc HL
+	; next loop
+	dec B
+	jr nz, .loop
+
+	ret
