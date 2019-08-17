@@ -39,6 +39,11 @@ rLCDC_DEFAULT EQU %11100011
 	ld [rLCDC], a
 	call DisableLCD
 
+	; switch to CGB double-speed mode
+	ld a, 1
+	ld [$ff4d], a
+	stop
+
 	ld sp, wStack
 
 	ld hl, $c000 ; start of WRAM
