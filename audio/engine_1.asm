@@ -896,34 +896,7 @@ Audio1_ApplyWavePatternAndFrequency:
 	jr nz, .notChannel3
 	; fall through
 .channel3
-	push de
-	ld de, wMusicWaveInstrument
-	cp Ch2
-	jr z, .next
-	ld de, wSfxWaveInstrument
-.next
-	ld a, [de]
-	add a
-	ld d, 0
-	ld e, a
-	ld hl, Audio1_WavePointers
-	add hl, de
-	ld e, [hl]
-	inc hl
-	ld d, [hl]
-	ld hl, $ff30 ; wave pattern RAM
-	ld b, $f
-	ld a, $0 ; stop hardware channel 3
-.loop
-	ld a, [de]
-	inc de
-	ld [hli], a
-	ld a, b
-	dec b
-	and a
-	jr nz, .loop
-	ld a, $80 ; start hardware channel 3
-	pop de
+	; Do nothing, don't want to affect ch3
 .notChannel3
 	ld a, d
 	or $80 ; use counter mode (i.e. disable output when the counter reaches 0)
@@ -1556,7 +1529,6 @@ Audio1_PlaySound::
 	xor a
 	ld [rNR30], a ; wave playback off
 	ld [rNR51], a ; no sound output
-	ld [rNR32], a ; mute channel 3 (wave channel)
 	ld a, $8
 	ld [rNR10], a ; sweep off
 	ld [rNR12], a ; mute channel 1 (pulse channel 1)

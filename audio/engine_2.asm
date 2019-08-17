@@ -877,34 +877,7 @@ Audio2_21dcc:
 	jr nz, .notSfxChannel3
 	; fall through
 .channel3
-	push de
-	ld de, wMusicWaveInstrument
-	cp Ch2
-	jr z, .musicChannel3
-	ld de, wSfxWaveInstrument
-.musicChannel3
-	ld a, [de]
-	add a
-	ld d, $0
-	ld e, a
-	ld hl, Audio2_WavePointers
-	add hl, de
-	ld e, [hl]
-	inc hl
-	ld d, [hl]
-	ld hl, $ff30
-	ld b, $f
-	ld a, $0
-.loop
-	ld a, [de]
-	inc de
-	ld [hli], a
-	ld a, b
-	dec b
-	and a
-	jr nz, .loop
-	ld a, $80
-	pop de
+	; Do nothing, don't want to affect ch3
 .notSfxChannel3
 	ld a, d
 	or $80
@@ -1563,7 +1536,6 @@ Audio2_221f3:
 	xor a
 	ld [rNR30], a
 	ld [rNR51], a
-	ld [rNR32], a
 	ld a, $8
 	ld [rNR10], a
 	ld [rNR12], a
