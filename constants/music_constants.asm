@@ -4,6 +4,9 @@ HW_CH2_BASE EQU ((rNR21 % $100) - 1)
 HW_CH3_BASE EQU (rNR30 % $100)
 HW_CH4_BASE EQU ((rNR41 % $100) - 1)
 
+; All writes to ch3 registers are redirected here, where they are a no-op
+HW_CH3_DUMMY_REGISTER EQU $feff
+
 ; HW sound channel enable bit masks
 HW_CH1_ENABLE_MASK EQU %00010001
 HW_CH2_ENABLE_MASK EQU %00100010

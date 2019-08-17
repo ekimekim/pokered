@@ -21,9 +21,7 @@ Audio3_UpdateMusic::
 	ld [wMuteAudioAndPauseMusic], a
 	xor a
 	ld [rNR51], a
-	ld [rNR30], a
 	ld a, $80
-	ld [rNR30], a
 	jr .nextChannel
 .applyAffects
 	call Audio3_ApplyMusicAffects
@@ -184,9 +182,7 @@ Audio3_endchannel:
 	cp Ch6
 	jr nz, .notSfxChannel3
 	ld a, $0
-	ld [rNR30], a
 	ld a, $80
-	ld [rNR30], a
 .notSfxChannel3
 	jr nz, .asm_7d296
 	ld a, [wDisableChannelOutputWhenSfxEnds]
@@ -892,7 +888,6 @@ Audio3_7d6bf:
 	ld hl, $ff30
 	ld b, $f
 	ld a, $0
-	ld [rNR30], a
 .loop
 	ld a, [de]
 	inc de
@@ -902,7 +897,6 @@ Audio3_7d6bf:
 	and a
 	jr nz, .loop
 	ld a, $80
-	ld [rNR30], a
 	pop de
 .notSfxChannel3
 	ld a, d
@@ -1223,6 +1217,11 @@ Audio3_GetNextMusicByte:
 
 Audio3_7d8ac:
 	ld a, c
+; return dummy address when channel is 2 or 6 (ch3)
+	and $03 ; we only need the bottom 4 bytes anyway, the table is identical for the top 4
+	cp 2 ; set z if ch3
+	ld hl, HW_CH3_DUMMY_REGISTER
+	ret z ; return with dummy addr if ch3
 	ld hl, Unknown_7db8b
 	add l
 	jr nc, .noCarry
@@ -1351,9 +1350,7 @@ Audio3_PlaySound::
 	ld a, $0
 	ld [rNR51], a
 	xor a
-	ld [rNR30], a
 	ld a, $80
-	ld [rNR30], a
 	ld a, $77
 	ld [rNR50], a
 	jp Audio3_7db03
@@ -1512,8 +1509,8 @@ Audio3_7d9c2:
 Audio3_7daa8:
 	ld a, $80
 	ld [rNR52], a
-	ld [rNR30], a
 	xor a
+	ld [rNR30], a
 	ld [rNR51], a
 	ld [rNR32], a
 	ld a, $8

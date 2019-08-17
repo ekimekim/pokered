@@ -21,9 +21,7 @@ Audio1_UpdateMusic::
 	ld [wMuteAudioAndPauseMusic], a
 	xor a ; disable all channels' output
 	ld [rNR51], a
-	ld [rNR30], a
 	ld a, $80
-	ld [rNR30], a
 	jr .nextChannel
 .applyAffects
 	call Audio1_ApplyMusicAffects
@@ -183,9 +181,7 @@ Audio1_endchannel:
 	jr nz, .skipSfxChannel3
 ; restart hardware channel 3 (wave channel) output
 	ld a, $0
-	ld [rNR30], a
 	ld a, $80
-	ld [rNR30], a
 .skipSfxChannel3
 	jr nz, .asm_9222
 	ld a, [wDisableChannelOutputWhenSfxEnds]
@@ -918,7 +914,6 @@ Audio1_ApplyWavePatternAndFrequency:
 	ld hl, $ff30 ; wave pattern RAM
 	ld b, $f
 	ld a, $0 ; stop hardware channel 3
-	ld [rNR30], a
 .loop
 	ld a, [de]
 	inc de
@@ -928,7 +923,6 @@ Audio1_ApplyWavePatternAndFrequency:
 	and a
 	jr nz, .loop
 	ld a, $80 ; start hardware channel 3
-	ld [rNR30], a
 	pop de
 .notChannel3
 	ld a, d
@@ -1264,6 +1258,11 @@ Audio1_GetNextMusicByte:
 Audio1_GetRegisterPointer:
 ; hl = address of hardware sound register b for software channel c
 	ld a, c
+; return dummy address when channel is 2 or 6 (ch3)
+	and $03 ; we only need the bottom 4 bytes anyway, the table is identical for the top 4
+	cp 2 ; set z if ch3
+	ld hl, HW_CH3_DUMMY_REGISTER
+	ret z ; return with dummy addr if ch3
 	ld hl, Audio1_HWChannelBaseAddresses
 	add l
 	jr nc, .noCarry
@@ -1395,9 +1394,7 @@ Audio1_PlaySound::
 	ld a, 0
 	ld [rNR51], a
 	xor a
-	ld [rNR30], a
 	ld a, $80
-	ld [rNR30], a
 	ld a, $77
 	ld [rNR50], a
 	jp .playSoundCommon
@@ -1556,8 +1553,8 @@ Audio1_PlaySound::
 .stopAllAudio
 	ld a, $80
 	ld [rNR52], a ; sound hardware on
-	ld [rNR30], a ; wave playback on
 	xor a
+	ld [rNR30], a ; wave playback off
 	ld [rNR51], a ; no sound output
 	ld [rNR32], a ; mute channel 3 (wave channel)
 	ld a, $8
