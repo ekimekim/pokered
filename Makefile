@@ -21,11 +21,17 @@ RGBLINK ?= $(RGBDS)rgblink
 .SECONDEXPANSION:
 .PRECIOUS:
 .SECONDARY:
-.PHONY: all red blue clean tidy compare tools
+.PHONY: all red blue clean tidy compare tools gambatte bgb
 
 all: $(roms)
 red: pokered.gbc
 blue: pokeblue.gbc
+
+gambatte: pokered.gbc
+	gambatte_sdl "$<"
+
+bgb: pokered.gbc
+	bgb "$<"
 
 # For contributors to make sure a change didn't affect the contents of the rom.
 compare: $(roms)
