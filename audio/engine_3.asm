@@ -1258,6 +1258,7 @@ Audio3_PlaySound::
 	jr z, .asm_7d901
 	jp nc, Audio3_7d9c2
 .asm_7d901
+	Debug "Playing sound %a% on engine 3"
 	xor a
 	ld [wUnusedC000], a
 	ld [wDisableChannelOutputWhenSfxEnds], a

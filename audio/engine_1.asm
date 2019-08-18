@@ -1,5 +1,7 @@
 ; The first of three duplicated sound engines.
 
+include "debug.asm"
+
 Audio1_UpdateMusic::
 	ld c, Ch0
 .loop
@@ -1302,6 +1304,7 @@ Audio1_PlaySound::
 	jp nc, .playSfx
 
 .playMusic
+	Debug "Playing sound %a% on engine 1"
 	xor a
 	ld [wUnusedC000], a
 	ld [wDisableChannelOutputWhenSfxEnds], a
