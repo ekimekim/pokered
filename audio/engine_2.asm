@@ -1310,6 +1310,7 @@ Audio2_PlaySound::
 	jp nc, Audio2_2210d
 .asm_2204c
 	Debug "Playing sound %a% on engine 2"
+	ret ; stub
 	xor a
 	ld [wUnusedC000], a
 	ld [wDisableChannelOutputWhenSfxEnds], a

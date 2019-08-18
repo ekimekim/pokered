@@ -1305,6 +1305,7 @@ Audio1_PlaySound::
 
 .playMusic
 	Debug "Playing sound %a% on engine 1"
+	ret ; stub
 	xor a
 	ld [wUnusedC000], a
 	ld [wDisableChannelOutputWhenSfxEnds], a
