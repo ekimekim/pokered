@@ -1308,7 +1308,7 @@ Audio1_PlaySound::
 
 .playMusic
 	Debug "Playing sound %a% on engine 1"
-	ret ; stub
+	jp WaveMusicStart
 ;	xor a
 ;	ld [wUnusedC000], a
 ;	ld [wDisableChannelOutputWhenSfxEnds], a
@@ -1536,6 +1536,12 @@ Audio1_PlaySound::
 	xor a
 	ld [rNR30], a ; wave playback off
 	ld [rNR51], a ; no sound output
+	; set ch3 freq. We want 18396Hz so we set freq = 2^21/114. To get 114, we do 2048-114 = 1934.
+	ld a, LOW(1934)
+	ld [rNR33], a
+	ld a, HIGH(1934)
+	ld [rNR34], a
+	; note that top bit of NR34 is not set, so no playback yet
 	ld a, $8
 	ld [rNR10], a ; sweep off
 	ld [rNR12], a ; mute channel 1 (pulse channel 1)

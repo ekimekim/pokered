@@ -1262,7 +1262,7 @@ Audio3_PlaySound::
 	jp nc, Audio3_7d9c2
 .asm_7d901
 	Debug "Playing sound %a% on engine 3"
-	ret ; stub
+	jp WaveMusicStart
 
 Audio3_7d9c2:
 	ld l, a
@@ -1421,6 +1421,12 @@ Audio3_7daa8:
 	xor a
 	ld [rNR30], a
 	ld [rNR51], a
+	; set ch3 freq. We want 18396Hz so we set freq = 2^21/114. To get 114, we do 2048-114 = 1934.
+	ld a, LOW(1934)
+	ld [rNR33], a
+	ld a, HIGH(1934)
+	ld [rNR34], a
+	; note that top bit of NR34 is not set, so no playback yet
 	ld a, $8
 	ld [rNR10], a
 	ld [rNR12], a
