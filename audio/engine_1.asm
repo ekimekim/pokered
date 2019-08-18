@@ -1306,75 +1306,75 @@ Audio1_PlaySound::
 .playMusic
 	Debug "Playing sound %a% on engine 1"
 	ret ; stub
-	xor a
-	ld [wUnusedC000], a
-	ld [wDisableChannelOutputWhenSfxEnds], a
-	ld [wMusicTempo + 1], a
-	ld [wMusicWaveInstrument], a
-	ld [wSfxWaveInstrument], a
-	ld d, $8
-	ld hl, wChannelReturnAddresses
-	call .FillMem
-	ld hl, wChannelCommandPointers
-	call .FillMem
-	ld d, $4
-	ld hl, wChannelSoundIDs
-	call .FillMem
-	ld hl, wChannelFlags1
-	call .FillMem
-	ld hl, wChannelDuties
-	call .FillMem
-	ld hl, wChannelDutyCycles
-	call .FillMem
-	ld hl, wChannelVibratoDelayCounters
-	call .FillMem
-	ld hl, wChannelVibratoExtents
-	call .FillMem
-	ld hl, wChannelVibratoRates
-	call .FillMem
-	ld hl, wChannelFrequencyLowBytes
-	call .FillMem
-	ld hl, wChannelVibratoDelayCounterReloadValues
-	call .FillMem
-	ld hl, wChannelFlags2
-	call .FillMem
-	ld hl, wChannelPitchBendLengthModifiers
-	call .FillMem
-	ld hl, wChannelPitchBendFrequencySteps
-	call .FillMem
-	ld hl, wChannelPitchBendFrequencyStepsFractionalPart
-	call .FillMem
-	ld hl, wChannelPitchBendCurrentFrequencyFractionalPart
-	call .FillMem
-	ld hl, wChannelPitchBendCurrentFrequencyHighBytes
-	call .FillMem
-	ld hl, wChannelPitchBendCurrentFrequencyLowBytes
-	call .FillMem
-	ld hl, wChannelPitchBendTargetFrequencyHighBytes
-	call .FillMem
-	ld hl, wChannelPitchBendTargetFrequencyLowBytes
-	call .FillMem
-	ld a, $1
-	ld hl, wChannelLoopCounters
-	call .FillMem
-	ld hl, wChannelNoteDelayCounters
-	call .FillMem
-	ld hl, wChannelNoteSpeeds
-	call .FillMem
-	ld [wMusicTempo], a
-	ld a, $ff
-	ld [wStereoPanning], a
-	xor a
-	ld [rNR50], a
-	ld a, $8
-	ld [rNR10], a
-	ld a, 0
-	ld [rNR51], a
-	xor a
-	ld a, $80
-	ld a, $77
-	ld [rNR50], a
-	jp .playSoundCommon
+;	xor a
+;	ld [wUnusedC000], a
+;	ld [wDisableChannelOutputWhenSfxEnds], a
+;	ld [wMusicTempo + 1], a
+;	ld [wMusicWaveInstrument], a
+;	ld [wSfxWaveInstrument], a
+;	ld d, $8
+;	ld hl, wChannelReturnAddresses
+;	call .FillMem
+;	ld hl, wChannelCommandPointers
+;	call .FillMem
+;	ld d, $4
+;	ld hl, wChannelSoundIDs
+;	call .FillMem
+;	ld hl, wChannelFlags1
+;	call .FillMem
+;	ld hl, wChannelDuties
+;	call .FillMem
+;	ld hl, wChannelDutyCycles
+;	call .FillMem
+;	ld hl, wChannelVibratoDelayCounters
+;	call .FillMem
+;	ld hl, wChannelVibratoExtents
+;	call .FillMem
+;	ld hl, wChannelVibratoRates
+;	call .FillMem
+;	ld hl, wChannelFrequencyLowBytes
+;	call .FillMem
+;	ld hl, wChannelVibratoDelayCounterReloadValues
+;	call .FillMem
+;	ld hl, wChannelFlags2
+;	call .FillMem
+;	ld hl, wChannelPitchBendLengthModifiers
+;	call .FillMem
+;	ld hl, wChannelPitchBendFrequencySteps
+;	call .FillMem
+;	ld hl, wChannelPitchBendFrequencyStepsFractionalPart
+;	call .FillMem
+;	ld hl, wChannelPitchBendCurrentFrequencyFractionalPart
+;	call .FillMem
+;	ld hl, wChannelPitchBendCurrentFrequencyHighBytes
+;	call .FillMem
+;	ld hl, wChannelPitchBendCurrentFrequencyLowBytes
+;	call .FillMem
+;	ld hl, wChannelPitchBendTargetFrequencyHighBytes
+;	call .FillMem
+;	ld hl, wChannelPitchBendTargetFrequencyLowBytes
+;	call .FillMem
+;	ld a, $1
+;	ld hl, wChannelLoopCounters
+;	call .FillMem
+;	ld hl, wChannelNoteDelayCounters
+;	call .FillMem
+;	ld hl, wChannelNoteSpeeds
+;	call .FillMem
+;	ld [wMusicTempo], a
+;	ld a, $ff
+;	ld [wStereoPanning], a
+;	xor a
+;	ld [rNR50], a
+;	ld a, $8
+;	ld [rNR10], a
+;	ld a, 0
+;	ld [rNR51], a
+;	xor a
+;	ld a, $80
+;	ld a, $77
+;	ld [rNR50], a
+;	jp .playSoundCommon
 
 .playSfx
 	ld l, a
