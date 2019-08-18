@@ -239,7 +239,8 @@ Audio1_endchannel:
 	ret c
 .asm_9265
 	ld a, [wSavedVolume]
-	ld [rNR50], a
+; Avoid writing to volume as we're controlling it to make audio
+;	ld [rNR50], a
 	xor a
 	ld [wSavedVolume], a
 .skipCry
@@ -546,7 +547,8 @@ Audio1_volume:
 	cp $f0 ; is this command a volume?
 	jr nz, Audio1_executemusic ; no
 	call Audio1_GetNextMusicByte
-	ld [rNR50], a ; store volume
+; Avoid writing to volume as we're controlling it to make audio
+;	ld [rNR50], a ; store volume
 	jp Audio1_endchannel
 
 Audio1_executemusic:
@@ -1544,7 +1546,7 @@ Audio1_PlaySound::
 	ld [rNR24], a
 	ld [rNR44], a
 	ld a, $77
-	ld [rNR50], a ; full volume
+	ld [rNR50], a ; full volume. this is permitted as we've stopped wave playback
 	xor a
 	ld [wUnusedC000], a
 	ld [wDisableChannelOutputWhenSfxEnds], a
@@ -1663,10 +1665,12 @@ Audio1_PlaySound::
 	ld a, [wSavedVolume]
 	and a
 	jr nz, .done
-	ld a, [rNR50]
+;	ld a, [rNR50]
+	ld a, $77 ; save dummy value instead
 	ld [wSavedVolume], a
 	ld a, $77
-	ld [rNR50], a ; full volume
+; Avoid writing to volume as we're controlling it to make audio
+;	ld [rNR50], a ; full volume
 .done
 	ret
 

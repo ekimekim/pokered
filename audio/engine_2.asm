@@ -245,7 +245,8 @@ Audio2_endchannel:
 	ret c
 .asm_219e6
 	ld a, [wSavedVolume]
-	ld [rNR50], a
+; Avoid writing to volume as we're controlling it to make audio
+;	ld [rNR50], a
 	xor a
 	ld [wSavedVolume], a
 .asm_219ef
@@ -538,7 +539,8 @@ Audio2_volume:
 	cp $f0 ; is this command a volume?
 	jr nz, Audio2_executemusic ; no
 	call Audio2_GetNextMusicByte ; yes
-	ld [rNR50], a ; store volume
+; Avoid writing to volume as we're controlling it to make audio
+;	ld [rNR50], a ; store volume
 	jp Audio2_endchannel
 
 Audio2_executemusic:
@@ -1599,10 +1601,11 @@ Audio2_2224e:
 	ld a, [wSavedVolume]
 	and a
 	jr nz, .asm_222d4
-	ld a, [rNR50]
+	ld a, $77
 	ld [wSavedVolume], a
 	ld a, $77
-	ld [rNR50], a
+; Avoid writing to volume as we're controlling it to make audio
+;	ld [rNR50], a
 .asm_222d4
 	ret
 

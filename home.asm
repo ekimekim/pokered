@@ -992,6 +992,8 @@ ResetPlayerSpriteData_ClearSpriteData::
 	xor a
 	jp FillMemory
 
+; This actually doesn't really do anything due to us taking over volume control
+; We write to a dummy var instead since it still needs to count down correctly.
 FadeOutAudio::
 	ld a, [wAudioFadeOutControl]
 	and a ; currently fading out audio?
@@ -1000,7 +1002,7 @@ FadeOutAudio::
 	bit 1, a
 	ret nz
 	ld a, $77
-	ld [rNR50], a
+	ld [wDummyVolume], a
 	ret
 .fadingOut
 	ld a, [wAudioFadeOutCounter]
@@ -1012,7 +1014,7 @@ FadeOutAudio::
 .counterReachedZero
 	ld a, [wAudioFadeOutCounterReloadValue]
 	ld [wAudioFadeOutCounter], a
-	ld a, [rNR50]
+	ld a, [wDummyVolume]
 	and a ; has the volume reached 0?
 	jr z, .fadeOutComplete
 	ld b, a
@@ -1025,7 +1027,7 @@ FadeOutAudio::
 	dec a
 	swap a
 	or c
-	ld [rNR50], a
+	ld [wDummyVolume], a
 	ret
 .fadeOutComplete
 	ld a, [wAudioFadeOutControl]

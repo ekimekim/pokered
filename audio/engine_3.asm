@@ -238,7 +238,8 @@ Audio3_endchannel:
 	ret c
 .asm_7d2d9
 	ld a, [wSavedVolume]
-	ld [rNR50], a
+; Avoid writing to volume as we're controlling it to make audio
+;	ld [rNR50], a
 	xor a
 	ld [wSavedVolume], a
 .asm_7d2e2
@@ -531,7 +532,8 @@ Audio3_volume:
 	cp $f0 ; is this command a volume?
 	jr nz, Audio3_executemusic ; no
 	call Audio3_GetNextMusicByte ; yes
-	ld [rNR50], a ; store volume
+; Avoid writing to volume as we're controlling it to make audio
+;	ld [rNR50], a ; store volume
 	jp Audio3_endchannel
 
 Audio3_executemusic:
@@ -1548,10 +1550,11 @@ Audio3_7db03:
 	ld a, [wSavedVolume]
 	and a
 	jr nz, .asm_7db89
-	ld a, [rNR50]
+	ld a, $77
 	ld [wSavedVolume], a
 	ld a, $77
-	ld [rNR50], a
+; Avoid writing to volume as we're controlling it to make audio
+;	ld [rNR50], a
 .asm_7db89
 	ret
 

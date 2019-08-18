@@ -399,8 +399,9 @@ ShowPokedexData:
 ShowPokedexDataInternal:
 	ld hl, wd72c
 	set 1, [hl]
-	ld a, $33 ; 3/7 volume
-	ld [rNR50], a
+; Avoid writing to volume as we're controlling it to make audio
+;	ld a, $33 ; 3/7 volume
+;	ld [rNR50], a
 	call GBPalWhiteOut ; zero all palettes
 	call ClearScreen
 	ld a, [wd11e] ; pokemon ID
@@ -585,8 +586,9 @@ ShowPokedexDataInternal:
 	call GBPalNormal
 	ld hl, wd72c
 	res 1, [hl]
-	ld a, $77 ; max volume
-	ld [rNR50], a
+; Avoid writing to volume as we're controlling it to make audio
+;	ld a, $77 ; max volume
+;	ld [rNR50], a
 	ret
 
 HeightWeightText:

@@ -3197,7 +3197,10 @@ wBoxMonNicksEnd:: ; dee2
 
 wBoxDataEnd::
 
-; dee2
+; Used when fading out audio instead of the real volume register
+wDummyVolume:: ; dee3
+
+; dee3
 
 SECTION "Stack", WRAM0
 wStack:: ; dfff

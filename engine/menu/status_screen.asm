@@ -79,8 +79,9 @@ StatusScreen:
 .DontRecalculate
 	ld hl, wd72c
 	set 1, [hl]
-	ld a, $33
-	ld [rNR50], a ; Reduce the volume
+; Avoid writing to volume as we're controlling it to make audio
+;	ld a, $33
+;	ld [rNR50], a ; Reduce the volume
 	call GBPalWhiteOutWithDelay3
 	call ClearScreen
 	call UpdateSprites
@@ -431,8 +432,9 @@ StatusScreen2:
 	ld [hTilesetType], a
 	ld hl, wd72c
 	res 1, [hl]
-	ld a, $77
-	ld [rNR50], a
+; Avoid writing to volume as we're controlling it to make audio
+;	ld a, $77
+;	ld [rNR50], a
 	call GBPalWhiteOut
 	jp ClearScreen
 
