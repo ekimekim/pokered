@@ -128,6 +128,9 @@ CompareMapMusicBankWithCurrentBank::
 	scf
 	ret
 
+
+; Play music with id A from bank C.
+; Cancel any pending fade outs
 PlayMusic::
 	ld b, a
 	ld [wNewSoundID], a
@@ -142,7 +145,39 @@ PlayMusic::
 PlaySoundMusic::
 	ret ; stub out for now
 
-; plays sound specified by a. If value is $ff, sound is stopped
+; THEIRS: plays sound specified by a. If value is $ff, sound is stopped
+; wNewSoundID seems to be set for music but not sfx
+; it's also set to ff for stopping all sound
+;
+; pseudocode:
+; PlaySound(soundID=A):
+;  if wNewSoundID != 0:
+;    wChannelSoundIDs[4:7] = 0
+;  if wAudioFadeOutControl != 0:
+;    if wNewSoundID == 0:
+;      return
+;    wNewSoundID = 0
+;    if wLastMusicSoundID != ff:
+;       wLastMusicSoundID = soundID
+;       wAudioFadeOutCounterReloadValue = wAudioFadeOutControl
+;       wAudioFadeOutCounter = wAudioFadeOutControl
+;       wAudioFadeOutControl = soundID
+;		return
+;    wAudioFadeOutControl = 0
+;  wNewSoundID = 0
+;  hSavedROMBank = current bank
+;  current bank = wAudioROMBank
+;  call (audio engine corresponding to wAudioROMBank)_PlaySound(soundID)
+;  current bank = hSavedROMBank
+;
+; rephrased:
+;   When wNewSoundID not set:
+;     if wAudioFadeOutControl set, do nothing
+;     otherwise, call audio engine PlaySound()
+;   When wNewSoundID set:
+;     Clear upper channels
+;     if wAudioFadeOutControl set and wLastMusicSoundID != ff, do fade out
+;     otherwise, call audio engine PlaySound()
 PlaySound::
 	push hl
 	push de
@@ -150,7 +185,8 @@ PlaySound::
 	ld b, a
 	ld a, [wNewSoundID]
 	and a
-	jr z, .next
+	jr z, .next ; skip if [wNewSoundID] == 0
+	; clear top 4 channels in wChannelSoundIDs
 	xor a
 	ld [wChannelSoundIDs + Ch4], a
 	ld [wChannelSoundIDs + Ch5], a

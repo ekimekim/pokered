@@ -186,6 +186,10 @@ wSfxTempo:: ; c0ea
 wSfxHeaderPointer:: ; c0ec
 	ds 2
 
+; Things that play music set this before calling PlaySound.
+; It acts as a flag to that function.
+; When zero, just plays sound, or does nothing if wAudioFadeOutControl is set
+; When non-zero, also clears wChannelSoundIDs[4:7], and does fadeout if wAudioFadeOutControl is set
 wNewSoundID:: ; c0ee
 	ds 1
 
