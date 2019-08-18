@@ -56,7 +56,7 @@ SSAnne7RubText:
 .asm_61908
 	ld a, MUSIC_PKMN_HEALED
 	ld [wNewSoundID], a
-	call PlaySound ; note: we don't treat this as music since it's waited on
+	call PlaySound
 .asm_61910
 	ld a, [wChannelSoundIDs]
 	cp MUSIC_PKMN_HEALED

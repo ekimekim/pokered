@@ -213,7 +213,7 @@ ENDC
 	call WaitForSoundToFinish
 	ld a, MUSIC_TITLE_SCREEN
 	ld [wNewSoundID], a
-	call PlaySoundMusic
+	call PlaySound
 	xor a
 	ld [wUnusedCC5B], a
 

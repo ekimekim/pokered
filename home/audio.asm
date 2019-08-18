@@ -64,7 +64,7 @@ PlayDefaultMusicCommon::
 	ld a, b
 	ld [wLastMusicSoundID], a
 	ld [wNewSoundID], a
-	jp PlaySoundMusic
+	jp PlaySound
 
 UpdateMusic6Times::
 ; This is called when entering a map, before fading out the current music and
@@ -140,10 +140,7 @@ PlayMusic::
 	ld [wAudioROMBank], a
 	ld [wAudioSavedROMBank], a
 	ld a, b
-
-; plays music. normally would fallthrough to PlaySound but we intercept here.
-PlaySoundMusic::
-	ret ; stub out for now
+; fallthrough
 
 ; THEIRS: plays sound specified by a. If value is $ff, sound is stopped
 ; wNewSoundID seems to be set for music but not sfx
