@@ -830,6 +830,7 @@ Audio2_21d79:
 	jr nz, .skip
 .sfxNoiseChannel
 	ld a, [wStereoPanning]
+	and %10111011 ; don't touch ch3 even if panning says to
 	ld hl, Unknown_222e6
 	add hl, bc
 	and [hl]

@@ -850,6 +850,7 @@ Audio1_EnableChannelOutput:
 ; If this is the SFX noise channel or a music channel whose corresponding
 ; SFX channel is off, apply stereo panning.
 	ld a, [wStereoPanning]
+	and %10111011 ; don't touch ch3 even if panning says to
 	ld hl, Audio1_HWChannelEnableMasks
 	add hl, bc
 	and [hl]
