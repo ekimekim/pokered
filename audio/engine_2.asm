@@ -1472,10 +1472,9 @@ Audio2_221f3:
 	xor a
 	ld [rNR30], a
 	ld [rNR51], a
-	; set ch3 freq. We want 18396Hz so we set freq = 2^21/114. To get 114, we do 2048-114 = 1934.
-	ld a, LOW(1934)
+	ld a, LOW(CH3_FREQUENCY)
 	ld [rNR33], a
-	ld a, HIGH(1934)
+	ld a, HIGH(CH3_FREQUENCY)
 	ld [rNR34], a
 	; note that top bit of NR34 is not set, so no playback yet
 	ld a, $8
