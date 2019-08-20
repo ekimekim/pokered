@@ -21,7 +21,7 @@ RGBLINK ?= $(RGBDS)rgblink
 .SECONDEXPANSION:
 .PRECIOUS:
 .SECONDARY:
-.PHONY: all red blue clean tidy compare tools gambatte bgb
+.PHONY: all red blue clean tidy compare tools gambatte gambatte_debug bgb
 
 all: $(roms)
 red: pokered.gbc
@@ -29,6 +29,10 @@ blue: pokeblue.gbc
 
 gambatte: pokered.gbc
 	gambatte_sdl "$<"
+
+gambatte_debug: pokered.gbc
+	cd ../gambatte && ./build_sdl.sh
+	../gambatte/gambatte_sdl/gambatte_sdl "$<"
 
 bgb: pokered.gbc
 	bgb "$<"
