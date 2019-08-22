@@ -31,7 +31,7 @@ VBlank::
 	; into CGB tile palette 0 and OAM palettes 0-1.
 	call FixCGBPalettes
 
-	call $ff80 ; hOAMDMA
+	call DoOAMDMA
 	ld a, BANK(PrepareOAMData)
 	ld [H_LOADEDROMBANK], a
 	ld [MBC1RomBank], a
@@ -175,3 +175,21 @@ TranslatePalette:
 	jr nz, .loop
 
 	ret
+
+
+; Performs the OAM DMA copy without updating the volume (by writing the same as current).
+; As a reminder, OAM DMA routine at $ff80 expects:
+;  a = high(source addr)
+;  b = time to wait before writing to hl
+;  c = low(rDMA)
+;  d = value to write to hl
+;  e = 40 - b
+;  hl = addr in hram or io reg to write to (typically volume)
+DoOAMDMA:
+	ld a, HIGH(wOAMBuffer)
+	ld b, 20
+	ld e, b
+	ld c, LOW(rDMA)
+	ld hl, rNR50
+	ld d, [hl]
+	jp $ff80 ; tail call

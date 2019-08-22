@@ -12,15 +12,31 @@ WriteDMACodeToHRAM:
 	jr nz, .copy
 	ret
 
+; Expects:
+;   a = high(source addr)
+;   c = low(rDMA)
+;   hl = rNR50
+;   e = 40 - b
+; After 4 * b + 3 cycles, writes d to [hl]
+; Then waits 4 * e - 1 more cycles before returning.
+; Total size: 9
+; Which is 1 less than the original routine. Success!
 DMARoutine:
 	; initiate DMA
-	ld a, wOAMBuffer / $100
-	ld [rDMA], a
+	ld [c], a
 
-	; wait for DMA to finish
-	ld a, $28
-.wait
-	dec a
-	jr nz, .wait
+	; wait for volume write
+.wait1
+	dec b
+	jr nz, .wait1
+
+	; do volume write
+	ld [hl], d
+
+	; wait for finish
+.wait2
+	dec e
+	jr nz, .wait2
+
 	ret
 DMARoutineEnd:
