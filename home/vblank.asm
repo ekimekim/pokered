@@ -31,7 +31,7 @@ VBlank::
 	; into CGB tile palette 0 and OAM palettes 0-1.
 	call FixCGBPalettes
 
-	call $ff80 ; hOAMDMA
+	call CopyOAM
 	ld a, BANK(PrepareOAMData)
 	ld [H_LOADEDROMBANK], a
 	ld [MBC1RomBank], a
@@ -174,4 +174,26 @@ TranslatePalette:
 	dec B
 	jr nz, .loop
 
+	ret
+
+
+; Copy 160 bytes from wOAMBuffer to OAM RAM.
+; We do this instead of DMA so we can continue to serve interrupts and update music
+; during the copy.
+; It also frees up some hram.
+; Normally we would use a fast loop involving SP abuse here, but we want interrupts
+; to still work.
+; Total cycles: 6 + 13 * 80 - 1 (jr not taken on last loop) + 4 = 1049 cycles.
+; That's too long.
+CopyOAM:
+	ld HL, wOAMBuffer + 159
+	ld DE, $fe00 + 159
+.loop
+; unroll once
+REPT 2
+	ld A, [HL-]
+	ld [DE], A
+	dec E ; set c when E underflows
+ENDR
+	jr nc, .loop
 	ret
