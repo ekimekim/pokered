@@ -16,26 +16,25 @@
 ;  bbbbbbbb B1aaaaaa aaaaaaaa
 ; with the bank being Bbbbbbbbb and the address being 01aaaaaa aaaaaaaa.
 ;
-; We need to write the next volume every 116 bytes.
+; We need to write the next volume every 164 bytes.
 ; Every second time we do that, we also need to load the next pair of samples.
 ; Our cycle budget is half of all cycles (since we've doubled available cycles by doubling
 ; the cpu speed).
 
 
-; HRAM variables from $ff80 - $ff89, reclaimed by removing OAM DMA usage,
-; which we can't allow anyway as it would block audio from updating while running.
+; HRAM variables available from $ff87 - $ff89, reclaimed by making OAM DMA routine smaller,
+; plus $fffa - $fffe, which are unused.
 
-RSSET $ff80
 ; Next volume to write
-hWaveVolume rb 1
+hWaveVolume EQU $fffa
 ; The volume after that, or ff if we need to read the next one
-hNextWaveVolume rb 1
+hNextWaveVolume EQU $fffb
 ; Lower 8 bits of bank of next wave sample
-hWaveBankLow rb 1
+hWaveBankLow EQU $fffc
 ; Top bit of bank of next wave sample.
-hWaveBankHigh rb 1
+hWaveBankHigh rb $fffd
 ; Addr of next wave sample, big-endian
-hWaveAddr rw 1
+hWaveAddr rw $fffe
 
 
 ; Wave data. Use the section stack to avoid losing our current context inside home section.
