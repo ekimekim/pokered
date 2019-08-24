@@ -49,6 +49,10 @@ DisableLCD::
 	and $ff ^ rLCDC_ENABLE_MASK
 	ld [rLCDC], a
 	ld a, b
+	and $01 ; only keep vblank bit
+	ld b, a
+	ld a, [rIE]
+	or b ; re-set vblank bit if was set
 	ld [rIE], a
 	ret
 
