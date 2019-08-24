@@ -16,27 +16,28 @@ WriteDMACodeToHRAM:
 ;   a = high(source addr)
 ;   c = low(rDMA)
 ;   hl = rNR50
-;   e = 40 - b
-; After 4 * b + 3 cycles, writes d to [hl]
-; Then waits 4 * e - 1 more cycles before returning.
-; Total size: 9
-; Which is 1 less than the original routine. Success!
+;   b = 40
+; Writes d to [hl] immediately (2 cycles after call). Then writes e to [hl]
+; immediately after DMA, with exactly 164 cycles between.
+; Don't forget to include time to do the call when timing this.
+; Total size: 7
+; Which is 3 less than the original routine.
 DMARoutine:
-	; initiate DMA
+	; write d, 2 cycles. 164-cycle timer starts.
+	ld [hl], d
+
+	; initiate DMA, 2 cycles
 	ld [c], a
 
-	; wait for volume write
+	; wait for dma - 40*4 + 3 (last iteration is faster)
 .wait1
 	dec b
 	jr nz, .wait1
+	; now we're at 161 cycles
+	nop ; 162
 
-	; do volume write
-	ld [hl], d
-
-	; wait for finish
-.wait2
-	dec e
-	jr nz, .wait2
+	; write e, 2 cycles, so it ends on cycle 164
+	ld [hl], e
 
 	ret
 DMARoutineEnd:

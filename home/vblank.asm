@@ -187,9 +187,9 @@ TranslatePalette:
 ;  hl = addr in hram or io reg to write to (typically volume)
 DoOAMDMA:
 	ld a, HIGH(wOAMBuffer)
-	ld b, 20
-	ld e, b
+	ld b, 40
 	ld c, LOW(rDMA)
 	ld hl, rNR50
 	ld d, [hl]
+	ld e, d
 	jp $ff80 ; tail call
