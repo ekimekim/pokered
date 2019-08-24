@@ -203,7 +203,7 @@ PrepareSampleBody: MACRO
 	; save the two volumes
 	ld [hWaveVolume], A
 	ld A, B
-	ld [hWaveNextVolume], A
+	ld [hNextWaveVolume], A
 
 	; Write next sample. This can be done at any time during playing of current sample
 	; and the written value will overwrite current sample.
@@ -238,6 +238,11 @@ ENDM
 
 .oam_dma
 	; TODO
+
+	; clear pending OAM DMA flag
+	xor A
+	ld [hOAMDMAPending], A
+
 	pop HL
 	pop BC
 	pop AF
