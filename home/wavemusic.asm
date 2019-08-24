@@ -26,22 +26,19 @@
 ; plus $fffa - $fffe, which are unused.
 
 ; Next volume to write
-hWaveVolume EQU $fffa
+hWaveVolume EQU $ff87
 ; The volume after that, or ff if we need to read the next one
-hNextWaveVolume EQU $fffb
+hNextWaveVolume EQU $ff88
 ; Lower 8 bits of bank of next wave sample
-hWaveBankLow EQU $fffc
+hWaveBankLow EQU $fffa
 ; Top bit of bank of next wave sample.
-hWaveBankHigh rb $fffd
+hWaveBankHigh EQU $fffb
 ; Addr of next wave sample, big-endian
-hWaveAddr rw $fffe
+hWaveAddr EQU $fffc ; 2 bytes, so also fffd
+; fffe still unused
 
 
 ; Wave data. Use the section stack to avoid losing our current context inside home section.
-
-PUSHS
-
-SECTION "Wave pointer data", ROMX
 
 ; Pointer to track symbol \1
 WavePointer: MACRO
@@ -61,12 +58,16 @@ WavePointersByID::
 	WavePointer TestingTrack ; dummy 0 track for testing
 	; TODO
 
+PUSHS
+SECTION "Wave pointer data", ROMX
 include "audio/wave_data.asm"
 POPS
 
+include "debug.asm"
 
 ; Begin playing wave music song with id in A
 WaveMusicStart::
+	Breakpoint
 	; TODO map id A to a wave track pointer
 	ld HL, WavePointersByID
 

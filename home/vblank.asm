@@ -34,7 +34,7 @@ VBlank::
 	; If music is playing, schedule a DMA then wait for it to finish
 	; Otherwise, just do it ourselves immediately
 	ld a, [rTAC]
-	and a ; set z if no music
+	and $07 ; set z if no music
 	jr z, .no_music
 	ld a, 1
 	ld [hOAMDMAPending], a ; set DMA pending
