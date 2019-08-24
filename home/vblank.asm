@@ -95,7 +95,8 @@ VBlank::
 	pop de
 	pop bc
 	pop af
-	reti
+	; ret not reti because we re-enabled interrupts already
+	ret
 
 
 DelayFrame::

@@ -18,6 +18,7 @@ SECTION "rst 38", ROM0
 
 ; Hardware interrupts
 SECTION "vblank", ROM0
+	ei ; immediately re-enable interrupts so timer interrupt may fire
 	jp VBlank
 SECTION "hblank", ROM0
 	rst $38
