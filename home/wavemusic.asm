@@ -99,12 +99,16 @@ WaveMusicStart::
 
 	xor a
 	ld [rTAC], a ; stop any existing timer so we can set up timer regs safely
-	; We want to fire the timer every 116 cycles = 29 ticks * 4 cycles/tick.
-	; But on the first round, we start the timer 4 cycles before we start the audio
-	; so we need to delay an additional 4 cycles, so we set it to 30 but modulus to 29.
-	ld a, 30
+	; We want to fire the timer every 164 cycles = 41 ticks * 4 cycles/tick.
+	; But we want to have some leeway time between when it fires and when the next volume
+	; needs to be set.
+	; We start the timer exactly 2 cycles before audio begins.
+	; So to get a leeway of 4*N+2 cycles between timer overflow and volume time,
+	; we shorten the first round by N.
+	; Note that timer counts up and triggers on overflow so we set it to 256 - number of ticks
+	ld a, 256 - (41 - 0)
 	ld [rTIMA], a
-	dec a
+	ld a, 256 - 41
 	ld [rTMA], a
 	; prepare to turn on timer with freq 1 = 4 cycles/tick
 	ld a, %00000101
@@ -120,6 +124,9 @@ WaveMusicStart::
 	ret
 
 
-; Timer interrupt handler
+; Timer interrupt handler.
+; By the time we get here, at least 4 cycles have passed since the interrupt,
+; probably more since the CPU needs to finish the last instruction (6 for a call),
+; or interrupts might be disabled for up to ??? cycles.
 Timer::
 	reti
