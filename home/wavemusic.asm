@@ -66,6 +66,8 @@ POPS
 
 
 ; Load the track pointer in HL into the hram vars.
+; Clobbers A, HL.
+; Time: 21 cycles
 LoadTrackPointer: MACRO
 	ld A, [HL+] ; Bank low
 	ld [hWaveBankLow], A
@@ -105,28 +107,133 @@ WaveMusicStart::
 	; We start the timer exactly 2 cycles before audio begins.
 	; So to get a leeway of 4*N+2 cycles between timer overflow and volume time,
 	; we shorten the first round by N.
+	; We want to delay 14 cycles (see Timer handler below), so 4N+2 = 14, N = 3.
 	; Note that timer counts up and triggers on overflow so we set it to 256 - number of ticks
-	ld a, 256 - (41 - 0)
+	ld a, 256 - (41 - 3)
 	ld [rTIMA], a
 	ld a, 256 - 41
 	ld [rTMA], a
 	; prepare to turn on timer with freq 1 = 4 cycles/tick
 	ld a, %00000101
 
-	; Critical section - begin the timer, then exactly 4 cycles later begin playback.
+	; Critical section - begin the timer, then exactly 2 cycles later begin playback.
 	di
 	ld [rTAC], a ; begin timer
-	nop ; 1 cycle later
-	nop ; 2 cycles later
-    set 7, [hl] ; 4 cycles later: play
-	ei
+    set 7, [hl] ; 2 cycles later: play
 
-	ret
+	; We need to complete the first sample prepare before enabling interrupts,
+	; or else we might not finish it in time.
+	
+	push AF ; PrepareSample expects to need to pop AF when returning
+	jp PrepareSample
+	; note PrepareSample ends in reti, so this is a tail call AND an ei at the end
 
 
 ; Timer interrupt handler.
 ; By the time we get here, at least 4 cycles have passed since the interrupt,
 ; probably more since the CPU needs to finish the last instruction (6 for a call),
-; or interrupts might be disabled for up to ??? cycles.
+; or if vblank fires first then it can take up to 5(?) more cycles.
+; So worst case is 15 cycles delay in getting here, best is 4.
+; BUT that's all super hard to re-sync from, so we're just gonna ignore it and hope
+; that it's irregular enough not to be noticed. We'll assume we're at timer + 4.
+; Total cycles for interrupt:
+;  Fast branch: 36 cycles
+;  Slow branch: 21 + PrepareSample(82) = 103, which is still well below our time limit of ~150.
+;  With a jump: 21 + PrepareSample with Jump (122) = 143, which is _just_ within our limit.
 Timer::
+	; T+4
+	push AF ; T+8
+	ld A, [hWaveVolume] ; T+11
+	ld [rNR50], A ; write volume at T+14
+
+	; ok, absolutely critical section is over.
+
+	; check next wave volume. if it's ff, we need to prepare a new pair.
+	; otherwise, move it up into hWaveVolume and set hNextWaveVolume to ff.
+	ld A, [hNextWaveVolume]
+	inc A ; set z if A was $ff
+	jr z, PrepareSample ; tail call, PrepareSample takes care of pop AF and reti
+
+	dec A ; return it to its prev value
+	ld [hWaveVolume], A
+	ld A, $ff
+	ld [hNextWaveVolume], A ; write ff for next wave volume
+
+	; and we're done on the short path
+	pop af
 	reti
+
+
+; Look up next sample, resolve any jumps, write sample value to wave RAM,
+; then write next two volumes to HRAM.
+; For the non-jump case, total time: 82 cycles
+; With 1 jump: 48 then loop for 82-8 = 48 + 82 - 8 = 122
+PrepareSample:
+	push BC
+	push HL
+
+.after_jump
+	; Load bank and addr
+	ld HL, hWaveBankLow
+	ld A, [HL+] ; A = wave bank low
+	ld [MBC1RomBank], A ; switch to wave bank low
+	ld A, [HL+] ; A = wave bank high
+	ld [$3000], A ; switch to wave bank high, wave bank is now loaded
+	ld A, [HL+] ; A = top byte of wave addr
+	ld L, [HL] ; L = bottom byte of wave addr
+	ld H, A ; HL = wave addr
+
+	; grab volume pair and check for jump
+	ld A, [HL+]
+	rla ; shifts top bit of A into c
+	jr c, .jump
+	rra ; shift it back
+
+	; resolve volume pair into seperate bytes
+	; ie. 0xxx0yyy -> 0xxx0xxx, 0yyy0yyy
+	ld C, A ; C = volume pair (1st, 2nd)
+	and $0f ; select second volume, A = (0, 2nd)
+	ld B, A ; B = (0, 2nd)
+	swap A ; A = (2nd, 0)
+	or B ; A = (2nd, 2nd)
+    ld B, A ; A = B = second volume, copied to both nibbles
+    xor C ; A = (2nd^1st, 2nd^2nd) = (1st^2nd, 0)
+    swap A ; A = (0, 1st^2nd)
+    xor C ; A = (0^1st, 1st^2nd^2nd) = (1st, 1st)
+
+	; save the two volumes
+	ld [hWaveVolume], A
+	ld A, B
+	ld [hWaveNextVolume], A
+
+	; Write next sample. This can be done at any time during playing of current sample
+	; and the written value will overwrite current sample.
+	; It won't actually play for 32 more iterations, but we account for that when encoding.
+	ld A, [HL+] ; note HL now points at next volume/sample pair
+	ld [$ff30], A ; write to wave ram
+
+	; Save updated value of HL to hWaveAddr
+	ld A, H
+	ld [hWaveAddr], A
+	ld A, L
+	ld [hWaveAddr+1], A
+
+	; Cleanup: switch back banks
+	; dirty trick: Since hWaveAddr should always be even, bottom bit is 0.
+	; so we know bottom bit of A is 0 here so we can unset bank bit using it.
+	ld [$3000], A ; set bank top bit low, since that's where all non-wave-data banks are
+	ld A, [H_LOADEDROMBANK] ; get the bank that should be loaded right now
+	ld [MBC1RomBank], A ; switch back to original bank
+
+	; TODO check for OAM DMA
+
+	pop HL
+	pop BC
+	pop AF
+	reti
+
+.jump
+	; Load next 3 bytes of HL into hram vars
+	LoadTrackPointer
+	; Now start preparing the next sample again now that location vars are updated
+	jr .after_jump
