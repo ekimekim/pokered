@@ -118,3 +118,8 @@ WaveMusicStart::
 	ei
 
 	ret
+
+
+; Timer interrupt handler
+Timer::
+	reti
