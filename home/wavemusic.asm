@@ -22,7 +22,7 @@
 ; the cpu speed).
 
 
-; HRAM variables available from $ff87 - $ff89, reclaimed by making OAM DMA routine smaller,
+; HRAM variables available from $ff87 - $ff88, reclaimed by making OAM DMA routine smaller,
 ; plus $fffa - $fffe, which are unused.
 
 ; Next volume to write
@@ -65,10 +65,19 @@ include "audio/wave_data.asm"
 POPS
 
 
-; Load the track pointer in HL into the hram vars.
-; Clobbers A, HL.
-; Time: 21 cycles
-LoadTrackPointer: MACRO
+; Begin playing wave music song with id in A
+WaveMusicStart::
+	; TODO map id A to a wave track pointer
+	ld HL, WavePointersByID
+
+	; stop existing playback so we can modify things safely
+	xor a
+	di ; a long delay between next two instructions could cause audio artifacts
+	ld [rTAC], a ; stop timer
+	ld [rNR30], a ; stop playback
+	ei
+
+	; Load Track Pointer into hram vars
 	ld A, [HL+] ; Bank low
 	ld [hWaveBankLow], A
 	ld A, [HL+] ; Bank high + addr high
@@ -81,14 +90,6 @@ LoadTrackPointer: MACRO
 	ld [hWaveAddr], A ; save top byte of addr
 	ld A, [HL]
 	ld [hWaveAddr+1], A
-ENDM
-
-
-; Begin playing wave music song with id in A
-WaveMusicStart::
-	; TODO map id A to a wave track pointer
-	ld HL, WavePointersByID
-	LoadTrackPointer
 
 	; Set up Ch3 regs, but don't actually begin playback
 	ld a, $80
@@ -99,8 +100,6 @@ WaveMusicStart::
     ld [rNR32], a
     ld hl, rNR34 ; ready to begin playing
 
-	xor a
-	ld [rTAC], a ; stop any existing timer so we can set up timer regs safely
 	; We want to fire the timer every 164 cycles = 41 ticks * 4 cycles/tick.
 	; But we want to have some leeway time between when it fires and when the next volume
 	; needs to be set.
@@ -138,8 +137,8 @@ WaveMusicStart::
 ; that it's irregular enough not to be noticed. We'll assume we're at timer + 4.
 ; Total cycles for interrupt:
 ;  Fast branch: 36 cycles
-;  Slow branch: 21 + PrepareSample(82) = 103, which is still well below our time limit of ~150.
-;  With a jump: 21 + PrepareSample with Jump (122) = 143, which is _just_ within our limit.
+;  Slow branch: 21 + PrepareSample(88) = 109, which is still well below our time limit of ~150.
+;  With a jump: 21 + PrepareSample with Jump (117) = 138, which is _just_ within our limit.
 Timer::
 	; T+4
 	push AF ; T+8
@@ -166,13 +165,12 @@ Timer::
 
 ; Look up next sample, resolve any jumps, write sample value to wave RAM,
 ; then write next two volumes to HRAM.
-; For the non-jump case, total time: 82 cycles
-; With 1 jump: 48 then loop for 82-8 = 48 + 82 - 8 = 122
+; For the non-jump case, total time: 88 cycles
+; With jump: 
 PrepareSample:
 	push BC
 	push HL
 
-.after_jump
 	; Load bank and addr
 	ld HL, hWaveBankLow
 	ld A, [HL+] ; A = wave bank low
@@ -189,6 +187,7 @@ PrepareSample:
 	jr c, .jump
 	rra ; shift it back
 
+PrepareSampleBody: MACRO
 	; resolve volume pair into seperate bytes
 	; ie. 0xxx0yyy -> 0xxx0xxx, 0yyy0yyy
 	ld C, A ; C = volume pair (1st, 2nd)
@@ -224,16 +223,60 @@ PrepareSample:
 	ld [$3000], A ; set bank top bit low, since that's where all non-wave-data banks are
 	ld A, [H_LOADEDROMBANK] ; get the bank that should be loaded right now
 	ld [MBC1RomBank], A ; switch back to original bank
+ENDM
 
-	; TODO check for OAM DMA
+	PrepareSampleBody
+
+	ld A, [hOAMDMAPending]
+	and A ; set z if no DMA pending
+	jr nz, .oam_dma
 
 	pop HL
 	pop BC
 	pop AF
 	reti
 
+.oam_dma
+	; TODO
+	pop HL
+	pop BC
+	pop AF
+	reti
+
 .jump
-	; Load next 3 bytes of HL into hram vars
-	LoadTrackPointer
-	; Now start preparing the next sample again now that location vars are updated
-	jr .after_jump
+	; Load the track pointer from HL into hram vars
+	; as well as switch to the bank now.
+	ld A, [HL+] ; Bank low
+	ld [hWaveBankLow], A ; save it to hram
+	ld B, A ; and keep it for later. B = bank low
+	ld A, [HL+] ; Bank high + addr high
+	ld L, [HL] ; L = addr low
+	; we're done reading HL, so it's now safe to change banks
+	rlca ; rotate A left, so now top bit (high bank bit) is in bottom bit
+	; the only bit of the bank high value that matters is the bottom one,
+	; so we just leave the garbage (the top 7 bits of addr) in there.
+	ld [hWaveBankHigh], A ; save high bank
+	ld [$3000], A ; and also switch to it
+	and a ; clear carry flag
+	rra ; rotate right through carry, so now the 7 bits of addr are back to normal but top bit is 0
+	ld [hWaveAddr], A ; save top byte of addr
+	ld H, A ; now HL = addr
+	ld A, L
+	ld [hWaveAddr+1], A ; save bottom byte of addr
+	ld A, B ; A = bank low
+	ld [MBC1RomBank], A ; switch to it
+
+	; phew. ok, now we're in the new bank and HL = addr.
+	ld A, [HL+]
+	; and we're back to the state we were in before jumping to .jump
+
+	PrepareSampleBody
+
+	; note that unlike the other path, we DO NOT check for OAM DMA here.
+	; this is why this is its own path, we can't combine a jump and an OAM DMA
+	; because the timing would be different.
+
+	pop HL
+	pop BC
+	pop AF
+	reti

@@ -1,3 +1,7 @@
+
+; Flag indicating vblank code wants to OAM DMA but can't because music is playing
+hOAMDMAPending EQU $FF89
+
 hSoftReset EQU $FF8A
 ; Initialized to 16.
 ; Decremented each input iteration if the player
