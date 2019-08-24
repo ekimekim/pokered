@@ -32,7 +32,8 @@ SECTION "joypad", ROM0
 SECTION "Home", ROM0
 
 DisableLCD::
-	xor a
+	ld a, [rIF]
+	res 0, a
 	ld [rIF], a
 	ld a, [rIE]
 	ld b, a
