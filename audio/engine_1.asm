@@ -1536,6 +1536,7 @@ Audio1_PlaySound::
 	xor a
 	ld [rNR30], a ; wave playback off
 	ld [rNR51], a ; no sound output
+	ld [rTAC], a ; stop timer
 	; set ch3 freq
 	ld a, LOW(CH3_FREQUENCY)
 	ld [rNR33], a
