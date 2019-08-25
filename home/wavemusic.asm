@@ -246,14 +246,16 @@ ENDM
 	; We want to time the OAM DMA call so that it begins two cycles
 	; before next volume write is needed.
 
-	; The below (post-wait-loop, up to and including the call to $ff80) will take 29 cycles.
-	; We want to wait loop such that 81 + 29 + wait = 164.
+	; The below (post-wait-loop, up to and including the call to $ff80) will take 31 cycles.
+	; We want to wait loop such that 81 + 31 + wait = 164.
 	; Each wait loop cycle is 4 cycles, - 1 on the last cycle, but +2 for setting B, so +1 overall.
-	; so wait loop iterations = (164 - (81 + 29 + 1)) / 4 = 53 / 4 = 13 loops, plus one nop.
-	ld B, 13
+	; so wait loop iterations = (164 - (81 + 31 + 1)) / 4 = 51 / 4 = 12 loops, plus 3 nops.
+	ld B, 12
 .oam_wait
 	dec B
 	jr nz, .oam_wait
+	nop
+	nop
 	nop
 
 	; clear pending OAM DMA flag. it's safe to do this now since we won't return
@@ -277,6 +279,7 @@ ENDM
 	ld A, [hNextWaveVolume]
 	ld E, A
 	ld HL, rNR50
+	ld A, HIGH(wOAMBuffer)
 
 	; Do the DMA and volume updates
 	call $ff80
