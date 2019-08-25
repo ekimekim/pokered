@@ -106,7 +106,7 @@ WavePointerList2:
 	WavePointerWithID  MUSIC_DEFEATED_GYM_LEADER, WaveData_blank_0
 
 WavePointerList3:
-	WavePointerWithID         MUSIC_TITLE_SCREEN, WaveData_test_0
+	WavePointerWithID         MUSIC_TITLE_SCREEN, WaveData_title_0
 	WavePointerWithID              MUSIC_CREDITS, WaveData_blank_0
 	WavePointerWithID         MUSIC_HALL_OF_FAME, WaveData_blank_0
 	WavePointerWithID             MUSIC_OAKS_LAB, WaveData_blank_0

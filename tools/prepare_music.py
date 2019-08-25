@@ -22,7 +22,7 @@ def main(conf_file):
 		Optionally:
 			start: start time to clip, in seconds. default track start.
 			end: end time to clip, in seconds. default track end.
-			loop: time to loop back to, in seconds from start. default 0.
+			loop: time to loop back to, in seconds. default same as start.
 			compress: We try to make tracks louder by applying dynamic compression.
 				This is important because they're otherwise very quiet.
 				This factor controls how much to apply. Default 4. Set 0 to disable.
@@ -41,14 +41,14 @@ def main(conf_file):
 		f.write(json.dumps(loop_targets) + '\n')
 
 
-def do_file(name, file=None, url=None, start=0, end=None, loop=0, compress=4, fade=False, filters=[]):
+def do_file(name, file=None, url=None, start=0, end=None, loop=None, compress=4, fade=False, filters=[]):
 	if url is not None:
 		file = mktemp()
 		check_call(['youtube-dl', '-o', file, '-x'])
 	if file is None:
 		raise ValueError("url or file is required")
 	if loop is None:
-		loop = 0
+		loop = start
 	filters = list(filters)
 	if compress:
 		filters.append('acompressor=makeup={}'.format(compress))
@@ -61,7 +61,7 @@ def do_file(name, file=None, url=None, start=0, end=None, loop=0, compress=4, fa
 		'ffmpeg', '-ss', str(start), '-to', str(end), '-i', file,
 		'-af', ','.join(filters), 'music/{}.flac'.format(name), '-y',
 	])
-	loop_samples = int(loop * SAMPLE_RATE)
+	loop_samples = 2 * int((loop - start) * SAMPLE_RATE / 2) # needs to be even
 	return loop_samples
 
 
