@@ -1,4 +1,5 @@
 
+import json
 import logging
 import os
 import string
@@ -9,7 +10,7 @@ BANK_SIZE = 16*1024
 MIN_REUSE_SIZE = 16
 
 
-def main(bank_range, *tracks):
+def main(bank_range, loop_targets, *tracks):
 	"""Splits up all given track bins into the given range of banks.
 	Bank range is made up of comma-seperated bank specs.
 	Bank specs are either a range like M-N (inclusive), or a single
@@ -21,9 +22,7 @@ def main(bank_range, *tracks):
 
 	It will output an asm file to be included that defines all these sections.
 
-	Each track should be a filepath, optionally with :LOOP_TARGET suffix,
-	where LOOP_TARGET is the sample number to loop back to at the end.
-	If this is not given, it defaults to 0.
+	Each track should be a filepath.
 	"""
 	logging.basicConfig(level=logging.INFO)
 
@@ -46,16 +45,9 @@ def main(bank_range, *tracks):
 			bank, offset, length = parts
 		banks.append((bank, offset, length))
 
-	loop_targets = {}
-	for track in tracks:
-		if ':' in track:
-			track, loop_target = track.split(':')
-			loop_target = int(loop_target)
-		else:
-			loop_target = 0
-		loop_targets[track] = loop_target
+	loop_targets = json.load(open(loop_targets))
 
-	track_lengths = {track: os.stat(track).st_size for track in loop_targets}
+	track_lengths = {track: os.stat(track).st_size for track in tracks}
 
 	# Some early reporting on whether this is even going to work.
 	needed = sum(track_lengths.values())
@@ -122,7 +114,7 @@ def main(bank_range, *tracks):
 
 				# Write data
 				for pos in xrange(track_pos, track_pos + part_length, 2):
-					if pos == loop_targets[track]:
+					if pos == loop_targets.get(track, 0):
 						# This is our loop target. Add a label.
 						sys.stdout.write("{}_Loop:\n".format(track_ident))
 					data = map(ord, track_file.read(2))
