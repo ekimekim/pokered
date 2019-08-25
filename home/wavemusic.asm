@@ -66,6 +66,13 @@ POPS
 
 include "debug.asm"
 
+
+; See below for why we need this.
+PrepareSampleTrampoline:
+	call PrepareSample
+	; does not return
+
+
 ; Begin playing wave music song with id in A
 WaveMusicStart::
 	Breakpoint
@@ -102,6 +109,26 @@ WaveMusicStart::
     ld [rNR32], a
     ld hl, rNR34 ; ready to begin playing
 
+	; Some ordering weirdness here. Our normal order goes:
+	;  v1, v2, PrepareSample, v1, v2, PrepareSample
+	; But the actual order of dependencies is:
+	;  PrepareSample, v1, v2, PrepareSample, v1, v2
+	; Plus when we first start playback the first sample begins immediately,
+	; so for startup we need the sequence:
+	;  PrepareSample, v1, START, v2, PrepareSample, v1, v2, ...
+	; so we do a PrepareSample and v1 here, before we begin.
+
+	; Prepare first sample
+	; PrepareSample wants to pop AF before returning. We can't simply push AF here
+	; because it would be after the return pointer, not before.
+	; As a hacky workaround, use a trampoline to add an extra return address to the stack
+	; that is then skipped over.
+	call PrepareSampleTrampoline ; note that in returning, PrepareSample will reti. This is fine.
+	; Again, note implicit pop and ei from PrepareSample.
+
+	; Prepare first volume
+	call Timer ; another reti here, but no matter.
+
 	; We want to fire the timer every 164 cycles = 41 ticks * 4 cycles/tick.
 	; But we want to have some leeway time between when it fires and when the next volume
 	; needs to be set.
@@ -122,12 +149,7 @@ WaveMusicStart::
 	ld [rTAC], a ; begin timer
     set 7, [hl] ; 2 cycles later: play
 
-	; We need to complete the first sample prepare before enabling interrupts,
-	; or else we might not finish it in time.
-	
-	push AF ; PrepareSample expects to need to pop AF when returning
-	jp PrepareSample
-	; note PrepareSample ends in reti, so this is a tail call AND an ei at the end
+	reti ; combine ei and ret
 
 
 ; Timer interrupt handler.
