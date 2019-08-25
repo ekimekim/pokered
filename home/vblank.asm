@@ -148,7 +148,7 @@ POPS
 
 ; Read palettes from BGP, OBP0 and OBP1 and write equivalents
 ; to CGB palettes.
-; Cycle count: 43 + 3 * TranslatePalette = 295
+; Cycle count: 43 + 3 * TranslatePalette = 232
 FixCGBPalettes:
 	ld A, $80
 	ld [$ff68], A ; grid palette index = 0, autoincrement on
@@ -175,12 +175,10 @@ FixCGBPalettes:
 ; which has autoincrement on.
 ; H should be HIGH(DMGColorToCGB).
 ; E should be $03
-; Clobbers all but H, C, E.
-; Cycle count: 1 + 4 * 20 - 1 + 4 = 84
+; Clobbers A, D, L
+; Cycle count: 3 * 16 + 15 = 63
 TranslatePalette:
-	ld B, E ; B = 3
-.loop
-	ld A, D
+REPT 3
 	and E ; grab bottom two bits
 	rr D
 	rr D ; rotate D in prep for next loop
@@ -191,9 +189,17 @@ TranslatePalette:
 	ld [C], A
 	ld A, [HL]
 	ld [C], A
-	; next loop. note initial value is 3 and we loop until underflow, ie. 4 times
-	dec B
-	jr nc, .loop
+	ld A, D ; restore A for next loop
+ENDR
+	; final loop: don't update D, don't restore from D at end
+	and E ; grab bottom two bits
+	add A ; A = 2 * palette index
+	ld L, A ; L = 2 * index
+	; now [HL] = DMGColorToCGB[color]
+	ld A, [HL+]
+	ld [C], A
+	ld A, [HL]
+	ld [C], A
 
 	ret
 
