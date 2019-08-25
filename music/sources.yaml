@@ -1,0 +1,13 @@
+intro:
+  file: "/home/mike/music/Game Music/Pokemon/Braxton Burks - Kanto Symphony (Music from -Pokémon Red and Blue-)/Braxton Burks - Kanto Symphony (Music from -Pokémon Red and Blue-) - 02 Red and Blue (Opening Theme).flac"
+  compress: 4
+  start: 53.5
+  end: 67.1
+  filters:
+  - "atempo=1.1"
+title:
+  file: "/home/mike/music/Game Music/Pokemon/Braxton Burks - Kanto Symphony (Music from -Pokémon Red and Blue-)/Braxton Burks - Kanto Symphony (Music from -Pokémon Red and Blue-) - 02 Red and Blue (Opening Theme).flac"
+  compress: 4
+  start: 69
+  loop: 73.3
+  end: 88.25
