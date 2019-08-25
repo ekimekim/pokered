@@ -1,20 +1,3 @@
-; The rst vectors are unused.
-SECTION "rst 00", ROM0
-	rst $38
-SECTION "rst 08", ROM0
-	rst $38
-SECTION "rst 10", ROM0
-	rst $38
-SECTION "rst 18", ROM0
-	rst $38
-SECTION "rst 20", ROM0
-	rst $38
-SECTION "rst 28", ROM0
-	rst $38
-SECTION "rst 30", ROM0
-	rst $38
-SECTION "rst 38", ROM0
-	rst $38
 
 ; Hardware interrupts
 SECTION "vblank", ROM0

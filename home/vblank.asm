@@ -43,6 +43,8 @@ VBlank::
 	; into CGB tile palette 0 and OAM palettes 0-1.
 	call FixCGBPalettes
 
+	; VBlank-sensitive operations end.
+
 	; OAM DMA should definitely be done by now (or we did it ourselves).
 	; Just to check, loop until it's done.
 .dma_wait
@@ -58,8 +60,6 @@ VBlank::
 	; For CGB, need to move palette number from bit 4 to bits 0-2
 	; and clear other data from bits 0-2
 	call FixOAMDataCGBFlags
-
-	; VBlank-sensitive operations end.
 
 	call Random
 
@@ -133,24 +133,27 @@ NOT_VBLANKED EQU 1
 	ret
 
 
-; Mapping of DMA palette values 00, 01, 10 and 11 to CGB 16-bit colors 0bbb bbgg gggr rrrr.
+PUSHS
+
+SECTION "Palette map", ROM0 [$00]
+
+; Mapping of DMG palette values 00, 01, 10 and 11 to CGB 16-bit colors 0bbb bbgg gggr rrrr.
 ; Note they're little-endian, so it's actually gggrrrrr 0bbbbbgg
-; HACK: This will break if it crosses an alignment boundary (ie. if it overflows low byte
-; during lookup).
-DMAColorToCGB:
+DMGColorToCGB:
 	db %11111111, %01111111 ; 0 -> (31, 31, 31)
 	db %10010100, %01010010 ; 1 -> (20, 20, 20)
 	db %01001010, %00101001 ; 2 -> (10, 10, 10)
 	db %00000000, %00000000 ; 3 -> ( 0,  0,  0)
-
+POPS
 
 ; Read palettes from BGP, OBP0 and OBP1 and write equivalents
 ; to CGB palettes.
+; Cycle count: 43 + 3 * TranslatePalette = 295
 FixCGBPalettes:
 	ld A, $80
 	ld [$ff68], A ; grid palette index = 0, autoincrement on
 	ld [$ff6a], A ; OAM palette index = 0, autoincrement on
-	ld H, HIGH(DMAColorToCGB)
+	ld H, HIGH(DMGColorToCGB)
 	ld E, $03
 
 	ld A, [rBGP]
@@ -165,34 +168,32 @@ FixCGBPalettes:
 
 	ld A, [rOBP1]
 	ld D, A ; D = DMG OAM palette 1
-	call TranslatePalette ; write oam palette 1
-
-	ret
+	jr TranslatePalette ; write oam palette 1. tail call.
 
 
-; Given DMA palette D, write CGB colors to palette data register (ff+C)
+; Given DMG palette D, write CGB colors to palette data register (ff+C)
 ; which has autoincrement on.
-; H should be upper byte of DMAColorToCGB
+; H should be HIGH(DMGColorToCGB).
 ; E should be $03
-; Clobbers all but H, C, E
+; Clobbers all but H, C, E.
+; Cycle count: 1 + 4 * 20 - 1 + 4 = 84
 TranslatePalette:
-	ld B, 4
+	ld B, E ; B = 3
 .loop
 	ld A, D
 	and E ; grab bottom two bits
 	rr D
 	rr D ; rotate D in prep for next loop
 	add A ; A = 2 * palette index
-	add LOW(DMAColorToCGB)
-	ld L, A ; L = LOW(DMAColorToCGB) + 2 * index
-	; now [HL] = DMAColorToCGB[color]
+	ld L, A ; L = 2 * index
+	; now [HL] = DMGColorToCGB[color]
 	ld A, [HL+]
 	ld [C], A
 	ld A, [HL]
 	ld [C], A
-	; next loop
+	; next loop. note initial value is 3 and we loop until underflow, ie. 4 times
 	dec B
-	jr nz, .loop
+	jr nc, .loop
 
 	ret
 
