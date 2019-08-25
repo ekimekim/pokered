@@ -86,8 +86,8 @@ bicycle:
   fade: 1
   end: 38.5
 # Shout out to http://tasvideos.org/3358M.html
-# This is super long but it feels wrong to cut it off.
 credits:
   url: "https://www.youtube.com/watch?v=Y6ljFaKRTrI"
   start: 7
-  end: 182
+  end: 23
+  fade: 2
