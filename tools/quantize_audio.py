@@ -1,13 +1,18 @@
 
 import sys
+import os
 
 values = {(x+1) * (y - 7.5) + 60: (x, y) for x in range(8) for y in range(16)}
 ceil = max(values)
+
+RAW_OUTPUT = os.environ.get("RAW_OUTPUT", "").lower() == "true"
 
 
 def main():
 	"""Takes 8-bit samples on stdin, writes 16-bit pairs (volume pair, sample pair) to stdout.
 	This output is suitable to be directly put into a ROM, or sliced up to fit in banks.
+	If env var RAW_OUTPUT=true given, instead output in format suitable for conversion back
+	to an audio file.
 	"""
 	xs = []
 	ys = []
@@ -18,9 +23,15 @@ def main():
 		i = ord(c)
 		i = quantize(i)
 		assert i in values
-		x, y = values[i]
-		xs.append(x)
-		ys.append(y)
+		if RAW_OUTPUT:
+			sys.stdout.write(chr(int(i * 2)))
+		else:
+			x, y = values[i]
+			xs.append(x)
+			ys.append(y)
+
+	if RAW_OUTPUT:
+		return
 
 	if len(xs) % 2 == 1:
 		# even it up with a neutral value. easier than handling special case of odd total samples.
