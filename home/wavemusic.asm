@@ -94,7 +94,7 @@ WavePointerList1:
 	WavePointerWithID          MUSIC_SAFARI_ZONE, WaveData_blank_0
 	WavePointerWithID          MUSIC_PKMN_HEALED, WaveData_blank_0
 	; Route 1, Route 2, and underground paths
-	WavePointerWithID              MUSIC_ROUTES1, WaveData_blank_0
+	WavePointerWithID              MUSIC_ROUTES1, WaveData_route1_0
 	; Route 24 and Route 25, plus the New Game "Oak Speech"
 	WavePointerWithID              MUSIC_ROUTES2, WaveData_oakspeech_0
 	; Most of the other routes

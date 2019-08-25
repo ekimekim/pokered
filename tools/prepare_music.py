@@ -1,8 +1,8 @@
 
 import json
 import sys
-from subprocess import check_call
-from tempfile import mktemp
+from subprocess import check_call, check_output
+from tempfile import NamedTemporaryFile
 
 import yaml
 
@@ -43,8 +43,9 @@ def main(conf_file):
 
 def do_file(name, file=None, url=None, start=0, end=None, loop=None, compress=2, fade=False, filters=[]):
 	if url is not None:
-		file = mktemp()
-		check_call(['youtube-dl', '-o', file, '-x'])
+		f = NamedTemporaryFile()
+		file = f.name
+		f.write(check_output(['youtube-dl', '-o', '-', url]))
 	if file is None:
 		raise ValueError("url or file is required")
 	if loop is None:

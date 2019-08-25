@@ -19,7 +19,6 @@ oak:
   filters:
   - "afade=t=in:d=0.3"
 pallet:
-  # This would be nice to make longer.
   file: "/home/mike/music/Game Music/Pokemon/Shinesparkers - Harmony of a Champion (Music from Pokémon Red and Green Versions)/02 Hello World.flac"
   start: 64.3
   end: 83.5
@@ -29,3 +28,9 @@ oakspeech:
   start: 230.5
   end: 253.3
   fade: 0.2
+# We're gonna spend a lot of space on this one. It's worth it.
+# We can trim it later if we must.
+route1:
+  url: "https://www.youtube.com/watch?v=fOsdy1ZsXUs"
+  end: 74
+  loop: 18
