@@ -25,7 +25,7 @@ def main(conf_file):
 			loop: time to loop back to, in seconds. default same as start.
 			compress: We try to make tracks louder by applying dynamic compression.
 				This is important because they're otherwise very quiet.
-				This factor controls how much to apply. Default 4. Set 0 to disable.
+				This factor controls how much to apply. Default 2. Set 0 to disable.
 			fade: Seconds of fade out at end of track. Default 0. If fade is set, end must also be.
 			filters: List of arbitrary ffmpeg filter strings.
 	"""
@@ -41,7 +41,7 @@ def main(conf_file):
 		f.write(json.dumps(loop_targets) + '\n')
 
 
-def do_file(name, file=None, url=None, start=0, end=None, loop=None, compress=4, fade=False, filters=[]):
+def do_file(name, file=None, url=None, start=0, end=None, loop=None, compress=2, fade=False, filters=[]):
 	if url is not None:
 		file = mktemp()
 		check_call(['youtube-dl', '-o', file, '-x'])

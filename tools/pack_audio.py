@@ -84,7 +84,7 @@ def main(bank_range, loop_targets, *tracks):
 				part_length = 2 * (min(track_length - track_pos, bank_length - 4) / 2)
 				used = part_length + 4
 
-				logging.info("Putting {} B into bank {}, {} B remaining".format(
+				logging.debug("Putting {} B into bank {}, {} B remaining".format(
 					part_length,
 					bank,
 					track_length - (track_pos + part_length),

@@ -87,7 +87,7 @@ WavePointerList1:
 	WavePointerWithID            MUSIC_VERMILION, WaveData_blank_0
 	WavePointerWithID             MUSIC_LAVENDER, WaveData_blank_0
 	WavePointerWithID              MUSIC_SS_ANNE, WaveData_blank_0
-	WavePointerWithID        MUSIC_MEET_PROF_OAK, WaveData_blank_0
+	WavePointerWithID        MUSIC_MEET_PROF_OAK, WaveData_oak_0
 	WavePointerWithID           MUSIC_MEET_RIVAL, WaveData_blank_0
 	; Used in a few places where NPCs are leading you around
 	WavePointerWithID           MUSIC_MUSEUM_GUY, WaveData_blank_0
@@ -95,7 +95,7 @@ WavePointerList1:
 	WavePointerWithID          MUSIC_PKMN_HEALED, WaveData_blank_0
 	; Route 1, Route 2, and underground paths
 	WavePointerWithID              MUSIC_ROUTES1, WaveData_blank_0
-	; Route 24 and Route 25
+	; Route 24 and Route 25, plus the New Game "Oak Speech"
 	WavePointerWithID              MUSIC_ROUTES2, WaveData_blank_0
 	; Most of the other routes
 	WavePointerWithID              MUSIC_ROUTES3, WaveData_blank_0
@@ -116,7 +116,7 @@ WavePointerList3:
 	WavePointerWithID         MUSIC_TITLE_SCREEN, WaveData_title_0
 	WavePointerWithID              MUSIC_CREDITS, WaveData_blank_0
 	WavePointerWithID         MUSIC_HALL_OF_FAME, WaveData_blank_0
-	WavePointerWithID             MUSIC_OAKS_LAB, WaveData_blank_0
+	WavePointerWithID             MUSIC_OAKS_LAB, WaveData_oak_0
 	WavePointerWithID      MUSIC_JIGGLYPUFF_SONG, WaveData_blank_0
 	WavePointerWithID          MUSIC_BIKE_RIDING, WaveData_blank_0
 	WavePointerWithID              MUSIC_SURFING, WaveData_blank_0

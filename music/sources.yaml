@@ -11,3 +11,10 @@ title:
   start: 69
   loop: 73.3
   end: 88.25
+oak:
+  file: "/home/mike/music/Game Music/Pokemon/Shinesparkers - Harmony of a Champion (Music from Pokémon Red and Green Versions)/03 Generations of Oak- Professor Oak's Laboratory.flac"
+  start: 17.2
+  end: 34
+  loop: 17.5
+  filters:
+  - "afade=t=in:d=0.3"
