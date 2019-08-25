@@ -75,7 +75,7 @@ WavePointerLists:
 ; For each id, map to a wave track pointer.
 ; This is a list of (id, pointer) (each entry is 4 bytes).
 WavePointerList1:
-	WavePointerWithID          MUSIC_PALLET_TOWN, WaveData_blank_0
+	WavePointerWithID          MUSIC_PALLET_TOWN, WaveData_pallet_0
 	WavePointerWithID           MUSIC_POKECENTER, WaveData_blank_0
 	WavePointerWithID                  MUSIC_GYM, WaveData_blank_0
 	; viridian, pewter, saffron, museum, daycare, dojo, various small houses
@@ -96,7 +96,7 @@ WavePointerList1:
 	; Route 1, Route 2, and underground paths
 	WavePointerWithID              MUSIC_ROUTES1, WaveData_blank_0
 	; Route 24 and Route 25, plus the New Game "Oak Speech"
-	WavePointerWithID              MUSIC_ROUTES2, WaveData_blank_0
+	WavePointerWithID              MUSIC_ROUTES2, WaveData_oakspeech_0
 	; Most of the other routes
 	WavePointerWithID              MUSIC_ROUTES3, WaveData_blank_0
 	; Routes 11-15

@@ -62,7 +62,7 @@ def main(bank_range, loop_targets, *tracks):
 
 	# Simple greedy algorithm. Biggest tracks first, filling biggest banks first.
 	for track, track_length in sorted(track_lengths.items(), key=lambda (t, l): l, reverse=True):
-		logging.info("Attempting to place track {!r}".format(track))
+		logging.info("Placing track {!r}".format(track))
 		with open(track) as track_file:
 			track_pos = 0
 			# ident is name that we can use in an identifier
@@ -93,7 +93,7 @@ def main(bank_range, loop_targets, *tracks):
 				# Check if there's any remaining space in bank. If so,
 				# split the bank and return the unused part (unless it's too small).
 				if bank_length - used > MIN_REUSE_SIZE:
-					logging.info("Reusing remaining {} B of bank".format(bank_length - used))
+					logging.debug("Reusing remaining {} B of bank".format(bank_length - used))
 					banks.append((bank, offset + used, bank_length - used))
 
 				part_name = "{}_{}".format(track_ident, track_pos)
