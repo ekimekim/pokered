@@ -117,12 +117,11 @@ gfx/tilesets/%.2bpp: tools/gfx += --trim-whitespace
 
 ORIGINALS := $(wildcard music/*.flac)
 MUSIC_BINS := $(ORIGINALS:.flac=.bin)
+# TODO: might be able to reclaim some space from unused bits of other banks
+MUSIC_BANKS := "45-512"
 
-music:
-	mkdir -p "$@"
+music/%.bin: music/%.flac
+	tools/process_audio $< > $@
 
-music/%.bin: music/%.flac music
-	tools/process_audio "$<" > "$@"
-
-music_things: $(MUSIC_BINS)
-.PHONY: music_things
+music/wave_data.asm: $(MUSIC_BINS)
+	python tools/pack_audio.py $(MUSIC_BANKS) $^ > $@

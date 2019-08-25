@@ -57,12 +57,11 @@ ENDM
 
 ; For each id, map to a wave track pointer.
 WavePointersByID::
-	WavePointer TestingTrack ; dummy 0 track for testing
+	WavePointer WaveData_test_0 ; dummy 0 track for testing
 	; TODO
 
 PUSHS
-SECTION "Wave pointer data", ROMX
-include "audio/wave_data.asm"
+include "music/wave_data.asm"
 POPS
 
 include "debug.asm"

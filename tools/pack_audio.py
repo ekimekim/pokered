@@ -112,7 +112,7 @@ def main(bank_range, *tracks):
 					sys.stdout.write("\tWaveJump {}\n".format(part_name))
 
 				# Write section header
-				sys.stdout.write('SECTION "{}: {} to {}", RAMX[{}], BANK[{}]\n'.format(
+				sys.stdout.write('SECTION "{}: {} to {}", ROMX[{}], BANK[{}]\n'.format(
 					track, track_pos, track_pos + part_length,
 					0x4000 + offset, bank
 				))
