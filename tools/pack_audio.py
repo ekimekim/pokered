@@ -68,7 +68,7 @@ def main(bank_range, loop_targets, *tracks):
 			# ident is name that we can use in an identifier
 			track_ident = 'WaveData_' + ''.join(
 				c for c in os.path.splitext(os.path.basename(track))[0]
-				if c in string.letters + string.digits
+				if c in string.letters + string.digits + '_'
 			)
 			while track_pos < track_length:
 				if not banks:
