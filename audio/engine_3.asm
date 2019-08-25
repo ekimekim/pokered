@@ -19,7 +19,8 @@ Audio3_UpdateMusic::
 	jr nz, .nextChannel
 	set 7, a
 	ld [wMuteAudioAndPauseMusic], a
-	xor a
+	ld a, [rNR51]
+	and $f0 ; disable all right-side channels' output
 	ld [rNR51], a
 	ld a, $80
 	jr .nextChannel
