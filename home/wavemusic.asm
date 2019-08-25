@@ -181,9 +181,7 @@ WaveMusicStart::
 	; Set up Ch3 regs, but don't actually begin playback
 	ld a, $80
 	ld [rNR30], a ; turn on ch3
-	ld a, [rNR51]
-	and $0f ; keep right side
-    or %01000000 ; enable ch3 on left side
+    ld a, %01000000 ; enable ch3 on left side. stop everything else.
     ld [rNR51], a
     ld a, %00100000 ; no shift of samples
     ld [rNR32], a
