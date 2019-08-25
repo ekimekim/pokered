@@ -39,6 +39,7 @@ hWaveBankHigh EQU $fffb
 hWaveAddr EQU $fffc ; 2 bytes, so also fffd
 ; ff88,fffe still unused
 
+SFX_VOLUME EQU 1 ; volume 2/8, because music is otherwise very quiet
 
 ; Wave data. Use the section stack to avoid losing our current context inside home section.
 
@@ -113,7 +114,7 @@ WavePointerList3:
 	WavePointerWithID          MUSIC_BIKE_RIDING, WaveData_blank_0
 	WavePointerWithID              MUSIC_SURFING, WaveData_blank_0
 	WavePointerWithID          MUSIC_GAME_CORNER, WaveData_blank_0
-	WavePointerWithID         MUSIC_INTRO_BATTLE, WaveData_blank_0
+	WavePointerWithID         MUSIC_INTRO_BATTLE, WaveData_intro_0
 	WavePointerWithID             MUSIC_DUNGEON1, WaveData_blank_0
 	WavePointerWithID             MUSIC_DUNGEON2, WaveData_blank_0
 	WavePointerWithID             MUSIC_DUNGEON3, WaveData_blank_0
@@ -289,7 +290,7 @@ PrepareSample:
 PrepareSampleBody: MACRO
 	; resolve volume pair into seperate bytes and save them
 	; ie. 0xxx0yyy -> 0xxx0vvv, 0yyy0vvv where vvv is sfx volume
-	ld B, 2 ; sfx volume = 3/8
+	ld B, SFX_VOLUME
 	ld C, A ; C = volume pair (1st, 2nd)
 	and $f0 ; A = (1st, 0)
 	or B ; A = (1st, sfx)
