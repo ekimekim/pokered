@@ -33,3 +33,6 @@
 # for vim configuration
 # url: http://www.vim.org/scripts/script.php?script_id=441
 .lvimrc
+
+# music source and build files
+music/

@@ -44,6 +44,7 @@ compare: $(roms)
 clean:
 	rm -f $(roms) $(pokered_obj) $(pokeblue_obj) $(roms:.gbc=.sym)
 	find . \( -iname '*.1bpp' -o -iname '*.2bpp' -o -iname '*.pic' \) -exec rm {} +
+	rm -f music/*.bin
 	$(MAKE) clean -C tools/
 
 tidy:
@@ -110,3 +111,18 @@ gfx/tilesets/%.2bpp: tools/gfx += --trim-whitespace
 
 %.pic:  %.2bpp
 	tools/pkmncompress $< $@
+
+
+### Wave music rules
+
+ORIGINALS := $(wildcard music/*.flac)
+MUSIC_BINS := $(ORIGINALS:.flac=.bin)
+
+music:
+	mkdir -p "$@"
+
+music/%.bin: music/%.flac music
+	tools/process_audio "$<" > "$@"
+
+music_things: $(MUSIC_BINS)
+.PHONY: music_things

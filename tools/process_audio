@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(dirname "$0")
+ROOT="$SCRIPT_DIR/.."
+
+INPUT=${1?need input}
+SAMPLE_RATE=12787
+
+ffmpeg -i "$INPUT" -f u8 -c:a pcm_u8 -ar "$SAMPLE_RATE" -ac 1 - |
+	python "$SCRIPT_DIR/quantize_audio.py"
