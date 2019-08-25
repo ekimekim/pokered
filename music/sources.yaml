@@ -34,3 +34,60 @@ route1:
   url: "https://www.youtube.com/watch?v=fOsdy1ZsXUs"
   end: 74
   loop: 18
+battle:
+  file: "/home/mike/music/Artists/FamilyJules7X/Gym Leader Battle Pokémon RBY Guitar Cover Feat. LowandSlow8-_7LdaodGaVw.m4a"
+  start: 3.3
+  end: 56
+battle_win:
+  file: "/home/mike/music/Artists/FamilyJules7X/Pokémon Red_Blue - 'Battle Vs. Trainer' METAL _ FamilyJules-uRwtBDtzAfw.opus"
+  start: 205
+  end: 217.5
+  fade: 0.5
+  loop: 206.4
+pokecenter:
+  file: "/home/mike/music/Game Music/Pokemon/Trevor Alan Gomes - Piano Collections- Pokémon Red/Trevor Alan Gomes - Piano Collections- Pokémon Red - 08 Pokémon Center.flac"
+  start: 5
+  end: 25
+city1:
+  file: "/home/mike/music/Game Music/Pokemon/Braxton Burks - Kanto Symphony (Music from -Pokémon Red and Blue-)/Braxton Burks - Kanto Symphony (Music from -Pokémon Red and Blue-) - 08 Viridian City (& Pewter City, Saffron City).flac"
+  compress: 4
+  start: 32.2
+  end: 80.5
+  fade: 0.5
+rival:
+  file: "/home/mike/music/Game Music/Pokemon/Trevor Alan Gomes - Piano Collections- Pokémon Red/Trevor Alan Gomes - Piano Collections- Pokémon Red - 05 A Rival Appears!.flac"
+  compress: 4
+  start: 14.7
+  end: 30
+route3:
+  file: "/home/mike/music/Artists/Smooth McGroove/Pokemon Red_Blue_Yellow - Route 3 Acapella-DOX-FwQXlLE.opus"
+  end: 28.8
+lavender:
+  file: "/home/mike/music/Artists/Smooth McGroove/GameChops - Smooth McGroove Remixed 2/Grimecraft - Smooth McGroove Remixed 2 - 06 Lavender Town.flac"
+  start: 12.7
+  end: 38.2
+# Ok, I had to do one silly one
+ssanne:
+  url: "https://www.youtube.com/watch?v=Ezr5_vae1CE"
+  start: 5
+  end: 23
+hideout:
+  file: "/home/mike/music/Game Music/Pokemon/GameChops - Ultraball/RoboRob - Ultraball - 06 Team Rocket Hideout (from -Pokémon Red & Blue-).flac"
+  end: 30.3
+forest:
+  file: "/home/mike/music/Game Music/Pokemon/Shinesparkers - Harmony of a Champion (Music from Pokémon Red and Green Versions)/07 Through the Underbrush- Viridian Forest.flac"
+  compress: 4
+  start: 27.3
+  end: 58
+  fade: 1
+bicycle:
+  file: "/home/mike/music/Game Music/Pokemon/Braxton Burks - Kanto Symphony (Music from -Pokémon Red and Blue-)/Braxton Burks - Kanto Symphony (Music from -Pokémon Red and Blue-) - 21 Bicycle.flac"
+  start: 2
+  fade: 1
+  end: 38.5
+# Shout out to http://tasvideos.org/3358M.html
+# This is super long but it feels wrong to cut it off.
+credits:
+  url: "https://www.youtube.com/watch?v=Y6ljFaKRTrI"
+  start: 7
+  end: 182

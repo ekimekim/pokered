@@ -76,64 +76,64 @@ WavePointerLists:
 ; This is a list of (id, pointer) (each entry is 4 bytes).
 WavePointerList1:
 	WavePointerWithID          MUSIC_PALLET_TOWN, WaveData_pallet_0
-	WavePointerWithID           MUSIC_POKECENTER, WaveData_blank_0
-	WavePointerWithID                  MUSIC_GYM, WaveData_blank_0
+	WavePointerWithID           MUSIC_POKECENTER, WaveData_pokecenter_0
+	WavePointerWithID                  MUSIC_GYM, WaveData_oak_0
 	; viridian, pewter, saffron, museum, daycare, dojo, various small houses
-	WavePointerWithID              MUSIC_CITIES1, WaveData_blank_0
+	WavePointerWithID              MUSIC_CITIES1, WaveData_cities1_0
 	; cerulean, fuchsia, a few people's houses
-	WavePointerWithID              MUSIC_CITIES2, WaveData_blank_0
-	WavePointerWithID              MUSIC_CELADON, WaveData_blank_0
-	WavePointerWithID             MUSIC_CINNABAR, WaveData_blank_0
-	WavePointerWithID            MUSIC_VERMILION, WaveData_blank_0
-	WavePointerWithID             MUSIC_LAVENDER, WaveData_blank_0
-	WavePointerWithID              MUSIC_SS_ANNE, WaveData_blank_0
+	WavePointerWithID              MUSIC_CITIES2, WaveData_cities1_0
+	WavePointerWithID              MUSIC_CELADON, WaveData_cities1_0
+	WavePointerWithID             MUSIC_CINNABAR, WaveData_cities1_0
+	WavePointerWithID            MUSIC_VERMILION, WaveData_cities1_0
+	WavePointerWithID             MUSIC_LAVENDER, WaveData_lavender_0
+	WavePointerWithID              MUSIC_SS_ANNE, WaveData_ssanne_0
 	WavePointerWithID        MUSIC_MEET_PROF_OAK, WaveData_oak_0
-	WavePointerWithID           MUSIC_MEET_RIVAL, WaveData_blank_0
+	WavePointerWithID           MUSIC_MEET_RIVAL, WaveData_rival_0
 	; Used in a few places where NPCs are leading you around
-	WavePointerWithID           MUSIC_MUSEUM_GUY, WaveData_blank_0
-	WavePointerWithID          MUSIC_SAFARI_ZONE, WaveData_blank_0
+	WavePointerWithID           MUSIC_MUSEUM_GUY, WaveData_rival_0
+	WavePointerWithID          MUSIC_SAFARI_ZONE, WaveData_route3_0
 	WavePointerWithID          MUSIC_PKMN_HEALED, WaveData_blank_0
 	; Route 1, Route 2, and underground paths
 	WavePointerWithID              MUSIC_ROUTES1, WaveData_route1_0
 	; Route 24 and Route 25, plus the New Game "Oak Speech"
 	WavePointerWithID              MUSIC_ROUTES2, WaveData_oakspeech_0
 	; Most of the other routes
-	WavePointerWithID              MUSIC_ROUTES3, WaveData_blank_0
+	WavePointerWithID              MUSIC_ROUTES3, WaveData_route3_0
 	; Routes 11-15
-	WavePointerWithID              MUSIC_ROUTES4, WaveData_blank_0
-	WavePointerWithID       MUSIC_INDIGO_PLATEAU, WaveData_blank_0
+	WavePointerWithID              MUSIC_ROUTES4, WaveData_route3_0
+	WavePointerWithID       MUSIC_INDIGO_PLATEAU, WaveData_route3_0
 
 WavePointerList2:
-	WavePointerWithID    MUSIC_GYM_LEADER_BATTLE, WaveData_blank_0
-	WavePointerWithID       MUSIC_TRAINER_BATTLE, WaveData_blank_0
-	WavePointerWithID          MUSIC_WILD_BATTLE, WaveData_blank_0
-	WavePointerWithID         MUSIC_FINAL_BATTLE, WaveData_blank_0
-	WavePointerWithID     MUSIC_DEFEATED_TRAINER, WaveData_blank_0
-	WavePointerWithID    MUSIC_DEFEATED_WILD_MON, WaveData_blank_0
-	WavePointerWithID  MUSIC_DEFEATED_GYM_LEADER, WaveData_blank_0
+	WavePointerWithID    MUSIC_GYM_LEADER_BATTLE, WaveData_battle_0
+	WavePointerWithID       MUSIC_TRAINER_BATTLE, WaveData_battle_0
+	WavePointerWithID          MUSIC_WILD_BATTLE, WaveData_battle_0
+	WavePointerWithID         MUSIC_FINAL_BATTLE, WaveData_battle_0
+	WavePointerWithID     MUSIC_DEFEATED_TRAINER, WaveData_battle_win_0
+	WavePointerWithID    MUSIC_DEFEATED_WILD_MON, WaveData_battle_win_0
+	WavePointerWithID  MUSIC_DEFEATED_GYM_LEADER, WaveData_battle_win_0
 
 WavePointerList3:
 	WavePointerWithID         MUSIC_TITLE_SCREEN, WaveData_title_0
-	WavePointerWithID              MUSIC_CREDITS, WaveData_blank_0
-	WavePointerWithID         MUSIC_HALL_OF_FAME, WaveData_blank_0
+	WavePointerWithID              MUSIC_CREDITS, WaveData_credits_0
+	WavePointerWithID         MUSIC_HALL_OF_FAME, WaveData_credits_0
 	WavePointerWithID             MUSIC_OAKS_LAB, WaveData_oak_0
 	WavePointerWithID      MUSIC_JIGGLYPUFF_SONG, WaveData_blank_0
-	WavePointerWithID          MUSIC_BIKE_RIDING, WaveData_blank_0
-	WavePointerWithID              MUSIC_SURFING, WaveData_blank_0
-	WavePointerWithID          MUSIC_GAME_CORNER, WaveData_blank_0
+	WavePointerWithID          MUSIC_BIKE_RIDING, WaveData_bicycle_0
+	WavePointerWithID              MUSIC_SURFING, WaveData_bicycle_0
+	WavePointerWithID          MUSIC_GAME_CORNER, WaveData_bicycle_0
 	WavePointerWithID         MUSIC_INTRO_BATTLE, WaveData_intro_0
 	; Rocket hideout, power plant, cerulean cave, some other misc places
-	WavePointerWithID             MUSIC_DUNGEON1, WaveData_blank_0
+	WavePointerWithID             MUSIC_DUNGEON1, WaveData_hideout_0
 	; Viridian Forest, Diglett Cave, Seaform Islands
-	WavePointerWithID             MUSIC_DUNGEON2, WaveData_blank_0
+	WavePointerWithID             MUSIC_DUNGEON2, WaveData_forest_0
 	; Mt Moon, Victory Road caves, Rock Tunnel
-	WavePointerWithID             MUSIC_DUNGEON3, WaveData_blank_0
-	WavePointerWithID     MUSIC_CINNABAR_MANSION, WaveData_blank_0
-	WavePointerWithID        MUSIC_POKEMON_TOWER, WaveData_blank_0
-	WavePointerWithID             MUSIC_SILPH_CO, WaveData_blank_0
-	WavePointerWithID    MUSIC_MEET_EVIL_TRAINER, WaveData_blank_0
-	WavePointerWithID  MUSIC_MEET_FEMALE_TRAINER, WaveData_blank_0
-	WavePointerWithID    MUSIC_MEET_MALE_TRAINER, WaveData_blank_0
+	WavePointerWithID             MUSIC_DUNGEON3, WaveData_hideout_0
+	WavePointerWithID     MUSIC_CINNABAR_MANSION, WaveData_forest_0
+	WavePointerWithID        MUSIC_POKEMON_TOWER, WaveData_forest_0
+	WavePointerWithID             MUSIC_SILPH_CO, WaveData_hideout_0
+	WavePointerWithID    MUSIC_MEET_EVIL_TRAINER, WaveData_rival_0
+	WavePointerWithID  MUSIC_MEET_FEMALE_TRAINER, WaveData_rival_0
+	WavePointerWithID    MUSIC_MEET_MALE_TRAINER, WaveData_rival_0
 
 PUSHS
 include "music/wave_data.asm"
