@@ -20,8 +20,8 @@ WriteDMACodeToHRAM:
 ; Writes d to [hl] immediately (2 cycles after call). Then writes e to [hl]
 ; immediately after DMA, with exactly 164 cycles between.
 ; Don't forget to include time to do the call when timing this.
-; Total size: 7
-; Which is 3 less than the original routine.
+; Total size: 8
+; Which is 2 less than the original routine.
 DMARoutine:
 	; write d, 2 cycles. 164-cycle timer starts.
 	ld [hl], d

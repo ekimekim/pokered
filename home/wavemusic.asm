@@ -22,21 +22,22 @@
 ; the cpu speed).
 
 
-; HRAM variables available from $ff87 - $ff88, reclaimed by making OAM DMA routine smaller,
-; $ffbf - $ffc0, reclaimed by removing SP abuse from fast copy
-; plus $fffa - $fffe, which are unused.
+; HRAM variables available:
+;  $ff88, reclaimed by making OAM DMA routine smaller
+;  $ffbf - $ffc0, reclaimed by removing SP abuse from fast copy
+;  $fffa - $fffe, which are unused
 
 ; Next volume to write
-hWaveVolume EQU $ff87
+hWaveVolume EQU $ffbf
 ; The volume after that, or ff if we need to read the next one
-hNextWaveVolume EQU $ff88
+hNextWaveVolume EQU $ffc0
 ; Lower 8 bits of bank of next wave sample
 hWaveBankLow EQU $fffa
 ; Top bit of bank of next wave sample.
 hWaveBankHigh EQU $fffb
 ; Addr of next wave sample, big-endian
 hWaveAddr EQU $fffc ; 2 bytes, so also fffd
-; fffe still unused
+; ff88,fffe still unused
 
 
 ; Wave data. Use the section stack to avoid losing our current context inside home section.
