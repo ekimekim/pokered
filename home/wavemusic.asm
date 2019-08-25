@@ -97,7 +97,9 @@ WaveMusicStart::
 	; Set up Ch3 regs, but don't actually begin playback
 	ld a, $80
 	ld [rNR30], a ; turn on ch3
-    or %01000100 ; enable ch3 in mux
+	ld a, [rNR51]
+	and $0f ; keep right side
+    or %01000000 ; enable ch3 on left side
     ld [rNR51], a
     ld a, %00100000 ; no shift of samples
     ld [rNR32], a
@@ -150,8 +152,8 @@ WaveMusicStart::
 ; that it's irregular enough not to be noticed. We'll assume we're at timer + 4.
 ; Total cycles for interrupt:
 ;  Fast branch: 36 cycles
-;  Slow branch: 21 + PrepareSample(88) = 109, which is still well below our time limit of ~150.
-;  With a jump: 21 + PrepareSample with Jump (117) = 138, which is _just_ within our limit.
+;  Slow branch: 21 + PrepareSample(86) = 107, which is still well below our time limit of ~150.
+;  With a jump: 21 + PrepareSample with Jump (115) = 136, which is _just_ within our limit.
 Timer::
 	; T+4
 	push AF ; T+8
@@ -178,7 +180,7 @@ Timer::
 
 ; Look up next sample, resolve any jumps, write sample value to wave RAM,
 ; then write next two volumes to HRAM.
-; For the non-jump case, total time: 88 cycles
+; For the non-jump case, total time: 86 cycles
 ; With jump: 
 PrepareSample:
 	push BC
@@ -202,21 +204,14 @@ PrepareSample:
 	rra ; shift it back
 
 PrepareSampleBody: MACRO
-	; resolve volume pair into seperate bytes
-	; ie. 0xxx0yyy -> 0xxx0xxx, 0yyy0yyy
+	; resolve volume pair into seperate bytes and save them
+	; ie. 0xxx0yyy -> 0xxx0000, 0yyy0000
 	ld C, A ; C = volume pair (1st, 2nd)
-	and $0f ; select second volume, A = (0, 2nd)
-	ld B, A ; B = (0, 2nd)
+	and $f0 ; A = (1st, 0)
+	ld [hWaveVolume], A ; save first volume
+	ld A, C
+	and $0f ; A = (0, 2nd)
 	swap A ; A = (2nd, 0)
-	or B ; A = (2nd, 2nd)
-    ld B, A ; A = B = second volume, copied to both nibbles
-    xor C ; A = (2nd^1st, 2nd^2nd) = (1st^2nd, 0)
-    swap A ; A = (0, 1st^2nd)
-    xor C ; A = (0^1st, 1st^2nd^2nd) = (1st, 1st)
-
-	; save the two volumes
-	ld [hWaveVolume], A
-	ld A, B
 	ld [hNextWaveVolume], A
 
 	; Write next sample. This can be done at any time during playing of current sample
@@ -251,21 +246,19 @@ ENDM
 	reti
 
 .oam_dma
-	; Right now we're at 74 cycles since PrepareSample start,
-	; and 7 more (= 81) since last volume write.
+	; Right now we're at 72 cycles since PrepareSample start,
+	; and 7 more (= 79) since last volume write.
 	; We want to time the OAM DMA call so that it begins two cycles
 	; before next volume write is needed.
 
 	; The below (post-wait-loop, up to and including the call to $ff80) will take 31 cycles.
-	; We want to wait loop such that 81 + 31 + wait = 164.
+	; We want to wait loop such that 79 + 31 + wait = 164.
 	; Each wait loop cycle is 4 cycles, - 1 on the last cycle, but +2 for setting B, so +1 overall.
-	; so wait loop iterations = (164 - (81 + 31 + 1)) / 4 = 51 / 4 = 12 loops, plus 3 nops.
-	ld B, 12
+	; so wait loop iterations = (164 - (79 + 31 + 1)) / 4 = 53 / 4 = 13 loops, plus 1 nop.
+	ld B, 13
 .oam_wait
 	dec B
 	jr nz, .oam_wait
-	nop
-	nop
 	nop
 
 	; clear pending OAM DMA flag. it's safe to do this now since we won't return

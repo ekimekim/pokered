@@ -826,6 +826,10 @@ Audio3_7d66c:
 .sfxNoiseChannel
 	ld a, [wStereoPanning]
 	and %10111011 ; don't touch ch3 even if panning says to
+	; force panned stereo output into mono right-side output
+	ld d, a ; d = (panL, panR)
+	swap a ; a = (panR, panL)
+	or d ; a = (panL | panR, panL | panR)
 	ld hl, Unknown_7db9b
 	add hl, bc
 	and [hl]
@@ -1571,12 +1575,12 @@ Unknown_7db8b:
 	db $10, $15, $1A, $1F ; channels 4-7
 
 Unknown_7db93:
-	db $EE, $DD, $BB, $77 ; channels 0-3
-	db $EE, $DD, $BB, $77 ; channels 4-7
+    db HW_CH1_DISABLE_MASK, HW_CH2_DISABLE_MASK, HW_CH3_DISABLE_MASK, HW_CH4_DISABLE_MASK ; channels 0-3
+    db HW_CH1_DISABLE_MASK, HW_CH2_DISABLE_MASK, HW_CH3_DISABLE_MASK, HW_CH4_DISABLE_MASK ; channels 4-7
 
 Unknown_7db9b:
-	db $11, $22, $44, $88 ; channels 0-3
-	db $11, $22, $44, $88 ; channels 4-7
+    db HW_CH1_ENABLE_MASK, HW_CH2_ENABLE_MASK, HW_CH3_ENABLE_MASK, HW_CH4_ENABLE_MASK ; channels 0-3
+    db HW_CH1_ENABLE_MASK, HW_CH2_ENABLE_MASK, HW_CH3_ENABLE_MASK, HW_CH4_ENABLE_MASK ; channels 4-7
 
 Audio3_Pitches:
 	dw $F82C ; C_

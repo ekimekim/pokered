@@ -853,6 +853,11 @@ Audio1_EnableChannelOutput:
 ; SFX channel is off, apply stereo panning.
 	ld a, [wStereoPanning]
 	and %10111011 ; don't touch ch3 even if panning says to
+	; force panned stereo output into mono right-side output
+	ld d, a ; d = (panL, panR)
+	swap a ; a = (panR, panL)
+	or d ; a = (panL | panR, panL | panR)
+	and $0f ; a = (0, panL | panR)
 	ld hl, Audio1_HWChannelEnableMasks
 	add hl, bc
 	and [hl]
