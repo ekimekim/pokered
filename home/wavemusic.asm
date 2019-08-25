@@ -152,8 +152,8 @@ WaveMusicStart::
 ; that it's irregular enough not to be noticed. We'll assume we're at timer + 4.
 ; Total cycles for interrupt:
 ;  Fast branch: 36 cycles
-;  Slow branch: 21 + PrepareSample(86) = 107, which is still well below our time limit of ~150.
-;  With a jump: 21 + PrepareSample with Jump (115) = 136, which is _just_ within our limit.
+;  Slow branch: 21 + PrepareSample(90) = 111, which is still well below our time limit of ~150.
+;  With a jump: 21 + PrepareSample with Jump (119) = 140, which is _just_ within our limit.
 Timer::
 	; T+4
 	push AF ; T+8
@@ -205,18 +205,21 @@ PrepareSample:
 
 PrepareSampleBody: MACRO
 	; resolve volume pair into seperate bytes and save them
-	; ie. 0xxx0yyy -> 0xxx0000, 0yyy0000
+	; ie. 0xxx0yyy -> 0xxx0vvv, 0yyy0vvv where vvv is sfx volume
+	ld B, 2 ; sfx volume = 3/8
 	ld C, A ; C = volume pair (1st, 2nd)
 	and $f0 ; A = (1st, 0)
+	or B ; A = (1st, sfx)
 	ld [hWaveVolume], A ; save first volume
 	ld A, C
 	and $0f ; A = (0, 2nd)
 	swap A ; A = (2nd, 0)
+	or B ; A = (2nd, sfx)
 	ld [hNextWaveVolume], A
 
 	; Write next sample. This can be done at any time during playing of current sample
 	; and the written value will overwrite current sample.
-	; It won't actually play for 32 more iterations, but we account for that when encoding.
+	; It won't actually play for 30 more iterations, but we account for that when encoding.
 	ld A, [HL+] ; note HL now points at next volume/sample pair
 	ld [$ff30], A ; write to wave ram
 
@@ -246,15 +249,16 @@ ENDM
 	reti
 
 .oam_dma
-	; Right now we're at 72 cycles since PrepareSample start,
-	; and 7 more (= 79) since last volume write.
+	; Right now we're at 76 cycles since PrepareSample start,
+	; and 7 more (= 85) since last volume write.
 	; We want to time the OAM DMA call so that it begins two cycles
 	; before next volume write is needed.
 
 	; The below (post-wait-loop, up to and including the call to $ff80) will take 31 cycles.
-	; We want to wait loop such that 79 + 31 + wait = 164.
+	; We want to wait loop such that 85 + 31 + wait = 164.
 	; Each wait loop cycle is 4 cycles, - 1 on the last cycle, but +2 for setting B, so +1 overall.
-	; so wait loop iterations = (164 - (79 + 31 + 1)) / 4 = 53 / 4 = 13 loops, plus 1 nop.
+	; so wait loop iterations = (164 - (85 + 31 + 1)) / 4 = 49 / 4 = 12 loops, plus 1 nop.
+	; One of the above calcs is off. Experimentally, this must be 13 or we get artifacting.
 	ld B, 13
 .oam_wait
 	dec B
