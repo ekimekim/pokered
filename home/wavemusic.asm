@@ -55,10 +55,74 @@ WaveJump: MACRO
 	WavePointer \1
 ENDM
 
+WavePointerWithID: MACRO
+	db \1
+	WavePointer \2
+ENDM
+
+WavePointerList: MACRO
+	db BANK(\1), HIGH(\2 - 4), LOW(\2 - 4)
+ENDM
+
+; Because ids repeat per bank, we maintain three WavePointersByID lists.
+; We find the correct list by first matching on [wAudioROMBank].
+WavePointerLists:
+	WavePointerList Audio1_PlaySound, WavePointerList1
+	WavePointerList Audio2_PlaySound, WavePointerList2
+	WavePointerList Audio3_PlaySound, WavePointerList3
+
 ; For each id, map to a wave track pointer.
-WavePointersByID::
-	WavePointer WaveData_test_0 ; dummy 0 track for testing
-	; TODO
+; This is a list of (id, pointer) (each entry is 4 bytes).
+WavePointerList1:
+	WavePointerWithID          MUSIC_PALLET_TOWN, WaveData_blank_0
+	WavePointerWithID           MUSIC_POKECENTER, WaveData_blank_0
+	WavePointerWithID                  MUSIC_GYM, WaveData_blank_0
+	WavePointerWithID              MUSIC_CITIES1, WaveData_blank_0
+	WavePointerWithID              MUSIC_CITIES2, WaveData_blank_0
+	WavePointerWithID              MUSIC_CELADON, WaveData_blank_0
+	WavePointerWithID             MUSIC_CINNABAR, WaveData_blank_0
+	WavePointerWithID            MUSIC_VERMILION, WaveData_blank_0
+	WavePointerWithID             MUSIC_LAVENDER, WaveData_blank_0
+	WavePointerWithID              MUSIC_SS_ANNE, WaveData_blank_0
+	WavePointerWithID        MUSIC_MEET_PROF_OAK, WaveData_blank_0
+	WavePointerWithID           MUSIC_MEET_RIVAL, WaveData_blank_0
+	WavePointerWithID           MUSIC_MUSEUM_GUY, WaveData_blank_0
+	WavePointerWithID          MUSIC_SAFARI_ZONE, WaveData_blank_0
+	WavePointerWithID          MUSIC_PKMN_HEALED, WaveData_blank_0
+	WavePointerWithID              MUSIC_ROUTES1, WaveData_blank_0
+	WavePointerWithID              MUSIC_ROUTES2, WaveData_blank_0
+	WavePointerWithID              MUSIC_ROUTES3, WaveData_blank_0
+	WavePointerWithID              MUSIC_ROUTES4, WaveData_blank_0
+	WavePointerWithID       MUSIC_INDIGO_PLATEAU, WaveData_blank_0
+
+WavePointerList2:
+	WavePointerWithID    MUSIC_GYM_LEADER_BATTLE, WaveData_blank_0
+	WavePointerWithID       MUSIC_TRAINER_BATTLE, WaveData_blank_0
+	WavePointerWithID          MUSIC_WILD_BATTLE, WaveData_blank_0
+	WavePointerWithID         MUSIC_FINAL_BATTLE, WaveData_blank_0
+	WavePointerWithID     MUSIC_DEFEATED_TRAINER, WaveData_blank_0
+	WavePointerWithID    MUSIC_DEFEATED_WILD_MON, WaveData_blank_0
+	WavePointerWithID  MUSIC_DEFEATED_GYM_LEADER, WaveData_blank_0
+
+WavePointerList3:
+	WavePointerWithID         MUSIC_TITLE_SCREEN, WaveData_test_0
+	WavePointerWithID              MUSIC_CREDITS, WaveData_blank_0
+	WavePointerWithID         MUSIC_HALL_OF_FAME, WaveData_blank_0
+	WavePointerWithID             MUSIC_OAKS_LAB, WaveData_blank_0
+	WavePointerWithID      MUSIC_JIGGLYPUFF_SONG, WaveData_blank_0
+	WavePointerWithID          MUSIC_BIKE_RIDING, WaveData_blank_0
+	WavePointerWithID              MUSIC_SURFING, WaveData_blank_0
+	WavePointerWithID          MUSIC_GAME_CORNER, WaveData_blank_0
+	WavePointerWithID         MUSIC_INTRO_BATTLE, WaveData_blank_0
+	WavePointerWithID             MUSIC_DUNGEON1, WaveData_blank_0
+	WavePointerWithID             MUSIC_DUNGEON2, WaveData_blank_0
+	WavePointerWithID             MUSIC_DUNGEON3, WaveData_blank_0
+	WavePointerWithID     MUSIC_CINNABAR_MANSION, WaveData_blank_0
+	WavePointerWithID        MUSIC_POKEMON_TOWER, WaveData_blank_0
+	WavePointerWithID             MUSIC_SILPH_CO, WaveData_blank_0
+	WavePointerWithID    MUSIC_MEET_EVIL_TRAINER, WaveData_blank_0
+	WavePointerWithID  MUSIC_MEET_FEMALE_TRAINER, WaveData_blank_0
+	WavePointerWithID    MUSIC_MEET_MALE_TRAINER, WaveData_blank_0
 
 PUSHS
 include "music/wave_data.asm"
@@ -67,8 +131,30 @@ POPS
 
 ; Begin playing wave music song with id in A
 WaveMusicStart::
-	; TODO map id A to a wave track pointer
-	ld HL, WavePointersByID
+	ld D, A ; put ID aside for now
+
+	; map id A to a wave track pointer by scanning list
+	ld HL, WavePointerLists - 1
+	ld A, [wAudioROMBank]
+.find_list_loop
+	inc HL
+	cp [HL] ; set z if match
+	jr nz, .find_list_loop
+	inc HL
+	; now [HL] points to track pointer list - 4
+
+	ld A, [HL+]
+	ld L, [HL]
+	ld H, A ; now HL = track pointer list - 4
+
+	ld A, D ; restore ID
+	ld BC, 4
+.find_loop
+	add HL, BC
+	cp [HL]
+	jr nz, .find_loop
+	inc HL
+	; now HL points at track pointer
 
 	; stop existing playback so we can modify things safely
 	xor a
