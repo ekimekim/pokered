@@ -38,6 +38,8 @@ because of problems with the makefile that I ran out of time to diagnose.
 
 * This isn't super well tested, you'll probably find bugs
 
+* * For a start, something's buggy with the battle menu, causing a audible artifact
+
 # Original README:
 
 This is a disassembly of Pokémon Red and Blue.
