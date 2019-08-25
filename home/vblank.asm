@@ -20,6 +20,18 @@ VBlank::
 	ld [rWY], a
 .ok
 
+	; If music is playing, schedule a DMA
+	; Otherwise, just do it ourselves immediately
+	ld a, [rTAC]
+	and $07 ; set z if no music
+	jr z, .no_music
+	ld a, 1
+	ld [hOAMDMAPending], a ; set DMA pending
+	jr .after_dma
+.no_music
+	call DoOAMDMA
+.after_dma
+
 	call AutoBgMapTransfer
 	call VBlankCopyBgMap
 	call RedrawRowOrColumn
@@ -31,21 +43,12 @@ VBlank::
 	; into CGB tile palette 0 and OAM palettes 0-1.
 	call FixCGBPalettes
 
-	; If music is playing, schedule a DMA then wait for it to finish
-	; Otherwise, just do it ourselves immediately
-	ld a, [rTAC]
-	and $07 ; set z if no music
-	jr z, .no_music
-	ld a, 1
-	ld [hOAMDMAPending], a ; set DMA pending
+	; OAM DMA should definitely be done by now (or we did it ourselves).
+	; Just to check, loop until it's done.
 .dma_wait
 	ld a, [hOAMDMAPending]
 	and a ; set z if DMA pending flag has been cleared
 	jr nz, .dma_wait
-	jr .after_dma
-.no_music
-	call DoOAMDMA
-.after_dma
 
 	ld a, BANK(PrepareOAMData)
 	ld [H_LOADEDROMBANK], a
