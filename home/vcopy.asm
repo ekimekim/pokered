@@ -296,9 +296,9 @@ VBlankCopy::
 	ret z
 
 	ld a, [H_VBCOPYSRC]
-	ld d, a
-	ld a, [H_VBCOPYSRC + 1]
 	ld e, a
+	ld a, [H_VBCOPYSRC + 1]
+	ld d, a
 
 	ld a, [H_VBCOPYDEST]
 	ld l, a
