@@ -115,10 +115,10 @@ gfx/tilesets/%.2bpp: tools/gfx += --trim-whitespace
 
 ### Wave music rules
 
-ORIGINALS := $(wildcard music/*.flac)
-MUSIC_BINS := $(ORIGINALS:.flac=.bin)
+ORIGINALS = $(wildcard music/*.flac)
+MUSIC_BINS = $(ORIGINALS:.flac=.bin)
 # TODO: might be able to reclaim some space from unused bits of other banks
-MUSIC_BANKS := "45-512"
+MUSIC_BANKS = "45-512"
 
 music/%.bin: music/%.flac
 	tools/process_audio $< > $@

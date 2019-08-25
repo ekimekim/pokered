@@ -24,3 +24,8 @@ pallet:
   start: 64.3
   end: 83.5
   fade: 0.5
+oakspeech:
+  file: "/home/mike/music/Game Music/Pokemon/Shinesparkers - Harmony of a Champion (Music from Pokémon Red and Green Versions)/01 A New Adventure.flac"
+  start: 230.5
+  end: 253.3
+  fade: 0.2
