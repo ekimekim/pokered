@@ -36,10 +36,12 @@ route1:
   loop: 18
 battle:
   file: "/home/mike/music/Artists/FamilyJules7X/Gym Leader Battle Pokémon RBY Guitar Cover Feat. LowandSlow8-_7LdaodGaVw.m4a"
+  compress: 4
   start: 3.3
   end: 56
 battle_win:
   file: "/home/mike/music/Artists/FamilyJules7X/Pokémon Red_Blue - 'Battle Vs. Trainer' METAL _ FamilyJules-uRwtBDtzAfw.opus"
+  compress: 4
   start: 205
   end: 217.5
   fade: 0.5
