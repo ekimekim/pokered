@@ -162,10 +162,34 @@ AutoBgMapTransfer::
 TransferBgRows::
 ; unrolled loop
 
-	rept 20
+; possible values of de are in c3a0 - c4f4
+; there are two times when overflow may occur - c3ff->c400 and c4ff->c500.
+; in the first case, de starts at c3f0 and overflow occurs on 16th copy
+; in the second, de starts at c4f4 and overflow occurs on the 12th copy.
+; so we need to inc de instead of inc e, but only on the 12th and 16th copy.
+
+DE_to_HL_and_inc: MACRO
 	ld a, [de]
 	ld [hl+], a
-	inc e
+	inc \1
+ENDM
+
+	rept 11
+	DE_to_HL_and_inc e
+	endr
+
+	; 12th inc, possible overflow
+	DE_to_HL_and_inc de
+
+	rept 3
+	DE_to_HL_and_inc e
+	endr
+
+	; 16th inc, possible overflow
+	DE_to_HL_and_inc de
+
+	rept 4
+	DE_to_HL_and_inc e
 	endr
 
 	ld a, 32 - 20
@@ -181,6 +205,9 @@ TransferBgRows::
 
 ; Copies [H_VBCOPYBGNUMROWS] rows from H_VBCOPYBGSRC to H_VBCOPYBGDEST.
 ; If H_VBCOPYBGSRC is XX00, the transfer is disabled.
+; Note H_VBCOPYBGSRC is only ever wTileMap + 20 * 6 * N for N = 0 to 2,
+; which is the same constraints as AutoBgMapTransfer so TransferBgRows's overflow
+; special cases are still correct.
 VBlankCopyBgMap::
 	ld a, [H_VBCOPYBGSRC] ; doubles as enabling byte
 	and a
@@ -232,13 +259,13 @@ VBlankCopyDouble::
 	ld a, [de]
 	ld [hl+], a
 	ld [hl+], a
-	inc e
+	inc de
 	endr
 
 	ld a, [de]
 	ld [hl+], a
 	ld [hl], a
-	inc e
+	inc de
 
 	inc hl
 	dec b
@@ -287,12 +314,12 @@ VBlankCopy::
 	rept 15
 	ld a, [de]
 	ld [hl+], a
-	inc e
+	inc de
 	endr
 
 	ld a, [de]
 	ld [hl], a
-	inc e
+	inc de
 
 	inc hl
 	dec b
