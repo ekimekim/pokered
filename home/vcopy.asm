@@ -123,30 +123,23 @@ AutoBgMapTransfer::
 	ld a, [H_AUTOBGTRANSFERENABLED]
 	and a
 	ret z
-	ld hl, sp + 0
-	ld a, h
-	ld [H_SPTEMP], a
-	ld a, l
-	ld [H_SPTEMP + 1], a ; save stack pinter
 	ld a, [H_AUTOBGTRANSFERPORTION]
 	and a
 	jr z, .transferTopThird
 	dec a
 	jr z, .transferMiddleThird
 .transferBottomThird
-	coord hl, 0, 12
-	ld sp, hl
+	coord de, 0, 12
 	ld a, [H_AUTOBGTRANSFERDEST + 1]
 	ld h, a
 	ld a, [H_AUTOBGTRANSFERDEST]
 	ld l, a
-	ld de, (12 * 32)
-	add hl, de
+	ld bc, (12 * 32)
+	add hl, bc
 	xor a ; TRANSFERTOP
 	jr .doTransfer
 .transferTopThird
-	coord hl, 0, 0
-	ld sp, hl
+	coord de, 0, 0
 	ld a, [H_AUTOBGTRANSFERDEST + 1]
 	ld h, a
 	ld a, [H_AUTOBGTRANSFERDEST]
@@ -154,36 +147,28 @@ AutoBgMapTransfer::
 	ld a, TRANSFERMIDDLE
 	jr .doTransfer
 .transferMiddleThird
-	coord hl, 0, 6
-	ld sp, hl
+	coord de, 0, 6
 	ld a, [H_AUTOBGTRANSFERDEST + 1]
 	ld h, a
 	ld a, [H_AUTOBGTRANSFERDEST]
 	ld l, a
-	ld de, (6 * 32)
-	add hl, de
+	ld bc, (6 * 32)
+	add hl, bc
 	ld a, TRANSFERBOTTOM
 .doTransfer
 	ld [H_AUTOBGTRANSFERPORTION], a ; store next portion
 	ld b, 6
 
 TransferBgRows::
-; unrolled loop and using pop for speed
+; unrolled loop
 
-	rept 20 / 2 - 1
-	pop de
-	ld [hl], e
-	inc l
-	ld [hl], d
-	inc l
+	rept 20
+	ld a, [de]
+	ld [hl+], a
+	inc e
 	endr
 
-	pop de
-	ld [hl], e
-	inc l
-	ld [hl], d
-
-	ld a, 32 - (20 - 1)
+	ld a, 32 - 20
 	add l
 	ld l, a
 	jr nc, .ok
@@ -192,11 +177,6 @@ TransferBgRows::
 	dec b
 	jr nz, TransferBgRows
 
-	ld a, [H_SPTEMP]
-	ld h, a
-	ld a, [H_SPTEMP + 1]
-	ld l, a
-	ld sp, hl
 	ret
 
 ; Copies [H_VBCOPYBGNUMROWS] rows from H_VBCOPYBGSRC to H_VBCOPYBGDEST.
@@ -205,16 +185,10 @@ VBlankCopyBgMap::
 	ld a, [H_VBCOPYBGSRC] ; doubles as enabling byte
 	and a
 	ret z
-	ld hl, sp + 0
-	ld a, h
-	ld [H_SPTEMP], a
-	ld a, l
-	ld [H_SPTEMP + 1], a ; save stack pointer
 	ld a, [H_VBCOPYBGSRC]
-	ld l, a
+	ld e, a
 	ld a, [H_VBCOPYBGSRC + 1]
-	ld h, a
-	ld sp, hl
+	ld d, a
 	ld a, [H_VBCOPYBGDEST]
 	ld l, a
 	ld a, [H_VBCOPYBGDEST + 1]
@@ -238,17 +212,10 @@ VBlankCopyDouble::
 	and a
 	ret z
 
-	ld hl, sp + 0
-	ld a, h
-	ld [H_SPTEMP], a
-	ld a, l
-	ld [H_SPTEMP + 1], a
-
 	ld a, [H_VBCOPYDOUBLESRC]
-	ld l, a
+	ld e, a
 	ld a, [H_VBCOPYDOUBLESRC + 1]
-	ld h, a
-	ld sp, hl
+	ld d, a
 
 	ld a, [H_VBCOPYDOUBLEDEST]
 	ld l, a
@@ -261,26 +228,18 @@ VBlankCopyDouble::
 	ld [H_VBCOPYDOUBLESIZE], a
 
 .loop
-	rept 3
-	pop de
-	ld [hl], e
-	inc l
-	ld [hl], e
-	inc l
-	ld [hl], d
-	inc l
-	ld [hl], d
-	inc l
+	rept 7
+	ld a, [de]
+	ld [hl+], a
+	ld [hl+], a
+	inc e
 	endr
 
-	pop de
-	ld [hl], e
-	inc l
-	ld [hl], e
-	inc l
-	ld [hl], d
-	inc l
-	ld [hl], d
+	ld a, [de]
+	ld [hl+], a
+	ld [hl], a
+	inc e
+
 	inc hl
 	dec b
 	jr nz, .loop
@@ -290,17 +249,10 @@ VBlankCopyDouble::
 	ld a, h
 	ld [H_VBCOPYDOUBLEDEST + 1], a
 
-	ld hl, sp + 0
-	ld a, l
+	ld a, e
 	ld [H_VBCOPYDOUBLESRC], a
-	ld a, h
+	ld a, d
 	ld [H_VBCOPYDOUBLESRC + 1], a
-
-	ld a, [H_SPTEMP]
-	ld h, a
-	ld a, [H_SPTEMP + 1]
-	ld l, a
-	ld sp, hl
 
 	ret
 
@@ -316,17 +268,10 @@ VBlankCopy::
 	and a
 	ret z
 
-	ld hl, sp + 0
-	ld a, h
-	ld [H_SPTEMP], a
-	ld a, l
-	ld [H_SPTEMP + 1], a
-
 	ld a, [H_VBCOPYSRC]
-	ld l, a
+	ld d, a
 	ld a, [H_VBCOPYSRC + 1]
-	ld h, a
-	ld sp, hl
+	ld e, a
 
 	ld a, [H_VBCOPYDEST]
 	ld l, a
@@ -339,18 +284,16 @@ VBlankCopy::
 	ld [H_VBCOPYSIZE], a
 
 .loop
-	rept 7
-	pop de
-	ld [hl], e
-	inc l
-	ld [hl], d
-	inc l
+	rept 15
+	ld a, [de]
+	ld [hl+], a
+	inc e
 	endr
 
-	pop de
-	ld [hl], e
-	inc l
-	ld [hl], d
+	ld a, [de]
+	ld [hl], a
+	inc e
+
 	inc hl
 	dec b
 	jr nz, .loop
@@ -360,17 +303,10 @@ VBlankCopy::
 	ld a, h
 	ld [H_VBCOPYDEST + 1], a
 
-	ld hl, sp + 0
-	ld a, l
+	ld a, e
 	ld [H_VBCOPYSRC], a
-	ld a, h
+	ld a, d
 	ld [H_VBCOPYSRC + 1], a
-
-	ld a, [H_SPTEMP]
-	ld h, a
-	ld a, [H_SPTEMP + 1]
-	ld l, a
-	ld sp, hl
 
 	ret
 

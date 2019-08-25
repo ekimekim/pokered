@@ -23,6 +23,7 @@
 
 
 ; HRAM variables available from $ff87 - $ff88, reclaimed by making OAM DMA routine smaller,
+; $ffbf - $ffc0, reclaimed by removing SP abuse from fast copy
 ; plus $fffa - $fffe, which are unused.
 
 ; Next volume to write

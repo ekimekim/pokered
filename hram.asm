@@ -210,7 +210,8 @@ H_AUTOBGTRANSFERDEST EQU $FFBC ; 2 bytes
 
 ; temporary storage for stack pointer during memory transfers that use pop
 ; to increase speed
-H_SPTEMP EQU $FFBF ; 2 bytes
+;H_SPTEMP EQU $FFBF ; 2 bytes
+; Now unused.
 
 ; source address for VBlankCopyBgMap function
 ; the first byte doubles as the byte that enabled the transfer.
