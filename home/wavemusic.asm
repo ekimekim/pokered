@@ -64,12 +64,9 @@ PUSHS
 include "music/wave_data.asm"
 POPS
 
-include "debug.asm"
-
 
 ; Begin playing wave music song with id in A
 WaveMusicStart::
-	Breakpoint
 	; TODO map id A to a wave track pointer
 	ld HL, WavePointersByID
 

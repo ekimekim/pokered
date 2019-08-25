@@ -1313,7 +1313,6 @@ Audio1_PlaySound::
 	jp nc, .playSfx
 
 .playMusic
-	Debug "Playing sound %a% on engine 1"
 	jp WaveMusicStart
 ;	xor a
 ;	ld [wUnusedC000], a
