@@ -123,5 +123,5 @@ MUSIC_BANKS := "45-512"
 music/%.bin: music/%.flac
 	tools/process_audio $< > $@
 
-music/wave_data.asm: $(MUSIC_BINS)
-	python tools/pack_audio.py $(MUSIC_BANKS) $^ > $@
+#music/wave_data.asm: $(MUSIC_BINS)
+#	python tools/pack_audio.py $(MUSIC_BANKS) $^ > $@
