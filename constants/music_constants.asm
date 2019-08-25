@@ -24,8 +24,8 @@ REG_VOLUME_ENVELOPE EQU 2
 REG_FREQUENCY_LO    EQU 3
 
 ; ch3 frequency
-; We want 18396Hz so we set freq = 2^21/114. To get 114, we do 2048-114 = 1934.
-CH3_FREQUENCY EQU 1934
+; We want 12787Hz so we set freq = 2^21/164.
+CH3_FREQUENCY EQU 2048 - 164
 
 MAX_SFX_ID EQU $B9
 
