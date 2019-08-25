@@ -20,6 +20,24 @@ See `tools/prepare_music.py` for docs on that file.
 * `make`. You may need to touch `music/sources.yaml` then re-`make` multiple times,
 because of problems with the makefile that I ran out of time to diagnose.
 
+## Limitations
+
+* In stereo, music only plays in the left ear. Sound effects only play in the right.
+  This is required due to the abuse of the volume control to get more sample range,
+  which would distort sound effects if they shared the same volume control.
+  Left and right volumes are controlled independently.
+
+* Cable club / trading will not work and may crash your game
+
+* There is only room for ~10min of audio in the cart. Some songs were cut and replaced
+  with existing songs.
+
+* Because all the music I'm using is copyrighted, I can't include it in this repo.
+  I hope at some point to make a version that sources entirely from online sources
+  so anyone can build my version without needing the tracks on my local computer.
+
+* This isn't super well tested, you'll probably find bugs
+
 # Original README:
 
 This is a disassembly of Pokémon Red and Blue.

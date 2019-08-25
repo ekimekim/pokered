@@ -79,12 +79,12 @@ WavePointerList1:
 	WavePointerWithID           MUSIC_POKECENTER, WaveData_pokecenter_0
 	WavePointerWithID                  MUSIC_GYM, WaveData_oak_0
 	; viridian, pewter, saffron, museum, daycare, dojo, various small houses
-	WavePointerWithID              MUSIC_CITIES1, WaveData_cities1_0
+	WavePointerWithID              MUSIC_CITIES1, WaveData_city1_0
 	; cerulean, fuchsia, a few people's houses
-	WavePointerWithID              MUSIC_CITIES2, WaveData_cities1_0
-	WavePointerWithID              MUSIC_CELADON, WaveData_cities1_0
-	WavePointerWithID             MUSIC_CINNABAR, WaveData_cities1_0
-	WavePointerWithID            MUSIC_VERMILION, WaveData_cities1_0
+	WavePointerWithID              MUSIC_CITIES2, WaveData_city1_0
+	WavePointerWithID              MUSIC_CELADON, WaveData_city1_0
+	WavePointerWithID             MUSIC_CINNABAR, WaveData_city1_0
+	WavePointerWithID            MUSIC_VERMILION, WaveData_city1_0
 	WavePointerWithID             MUSIC_LAVENDER, WaveData_lavender_0
 	WavePointerWithID              MUSIC_SS_ANNE, WaveData_ssanne_0
 	WavePointerWithID        MUSIC_MEET_PROF_OAK, WaveData_oak_0
