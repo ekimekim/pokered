@@ -135,6 +135,8 @@ NOT_VBLANKED EQU 1
 
 ; Mapping of DMA palette values 00, 01, 10 and 11 to CGB 16-bit colors 0bbb bbgg gggr rrrr.
 ; Note they're little-endian, so it's actually gggrrrrr 0bbbbbgg
+; HACK: This will break if it crosses an alignment boundary (ie. if it overflows low byte
+; during lookup).
 DMAColorToCGB:
 	db %11111111, %01111111 ; 0 -> (31, 31, 31)
 	db %10010100, %01010010 ; 1 -> (20, 20, 20)
@@ -148,6 +150,8 @@ FixCGBPalettes:
 	ld A, $80
 	ld [$ff68], A ; grid palette index = 0, autoincrement on
 	ld [$ff6a], A ; OAM palette index = 0, autoincrement on
+	ld H, HIGH(DMAColorToCGB)
+	ld E, $03
 
 	ld A, [rBGP]
 	ld D, A ; D = DMG grid palette
@@ -168,22 +172,19 @@ FixCGBPalettes:
 
 ; Given DMA palette D, write CGB colors to palette data register (ff+C)
 ; which has autoincrement on.
-; Clobbers all but C, E
+; H should be upper byte of DMAColorToCGB
+; E should be $03
+; Clobbers all but H, C, E
 TranslatePalette:
 	ld B, 4
 .loop
 	ld A, D
-	and $03 ; grab bottom two bits
+	and E ; grab bottom two bits
 	rr D
 	rr D ; rotate D in prep for next loop
-	ld HL, DMAColorToCGB
-	; HL += 2A
-	add A
-	add L
-	ld L, A
-	ld A, 0
-	adc H
-	ld H, A
+	add A ; A = 2 * palette index
+	add LOW(DMAColorToCGB)
+	ld L, A ; L = LOW(DMAColorToCGB) + 2 * index
 	; now [HL] = DMAColorToCGB[color]
 	ld A, [HL+]
 	ld [C], A
