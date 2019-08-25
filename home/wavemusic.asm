@@ -173,6 +173,7 @@ PrepareSample:
 	push BC
 	push HL
 
+.after_oam
 	; Load bank and addr
 	ld HL, hWaveBankLow
 	ld A, [HL+] ; A = wave bank low
@@ -239,16 +240,56 @@ ENDM
 	reti
 
 .oam_dma
-	; TODO
+	; Right now we're at 74 cycles since PrepareSample start,
+	; and 7 more (= 81) since last volume write.
+	; We want to time the OAM DMA call so that it begins two cycles
+	; before next volume write is needed.
 
-	; clear pending OAM DMA flag
+	; The below (post-wait-loop, up to and including the call to $ff80) will take 29 cycles.
+	; We want to wait loop such that 81 + 29 + wait = 164.
+	; Each wait loop cycle is 4 cycles, - 1 on the last cycle, but +2 for setting B, so +1 overall.
+	; so wait loop iterations = (164 - (81 + 29 + 1)) / 4 = 53 / 4 = 13 loops, plus one nop.
+	ld B, 13
+.oam_wait
+	dec B
+	jr nz, .oam_wait
+	nop
+
+	; clear pending OAM DMA flag. it's safe to do this now since we won't return
+	; until it's actually done, and we have time to kill.
 	xor A
 	ld [hOAMDMAPending], A
 
-	pop HL
-	pop BC
-	pop AF
-	reti
+	push DE
+
+	; OAM DMA routine at $ff80 expects:
+	;  a = high(wOAMBuffer)
+	;  c = low(rDMA)
+	;  hl = rNR50
+	;  b = 40
+	;  d = first volume
+	;  e = second volume
+	ld B, 40
+	ld C, LOW(rDMA)
+	ld A, [hWaveVolume]
+	ld D, A
+	ld A, [hNextWaveVolume]
+	ld E, A
+	ld HL, rNR50
+
+	; Do the DMA and volume updates
+	call $ff80
+
+	; Multiple timer interrupts have fired since we started.
+	; Clear them.
+	ld A, [rIF]
+	and %11111011 ; clear timer flag
+	ld [rIF], A
+
+	pop DE
+	; Now run PrepareSamples again (though without re-pushing HL and BC)
+	; since we just used the next two samples.
+	jr .after_oam
 
 .jump
 	; Load the track pointer from HL into hram vars
