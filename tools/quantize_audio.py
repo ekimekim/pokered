@@ -39,13 +39,13 @@ def main():
 		xs.append(x)
 		ys.append(y)
 
-	# ys is delayed by 31 so we pad xs with 31 zeroes at start and y with 32 7s at end
-	xs = [0] * 31 + xs
-	ys = ys + [7] * 31
+	# ys is delayed by 30 so we pad xs with 30 zeroes at start and y with 30 7s at end
+	xs = [0] * 30 + xs
+	ys = ys + [7] * 30
 
 	for (x1, x2), (y1, y2) in zip(zip(xs[::2], xs[1::2]), zip(ys[::2], ys[1::2])):
 		# pair of volumes first, then pair of samples. in both cases first sample is most signifigant nibble
-		sys.stdout.write(chr(x1 * 16 + x1) + chr(y1 * 16 + y2))
+		sys.stdout.write(chr(x1 * 16 + x2) + chr(y1 * 16 + y2))
 
 
 def quantize(i):

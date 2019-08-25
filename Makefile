@@ -44,7 +44,7 @@ compare: $(roms)
 clean:
 	rm -f $(roms) $(pokered_obj) $(pokeblue_obj) $(roms:.gbc=.sym)
 	find . \( -iname '*.1bpp' -o -iname '*.2bpp' -o -iname '*.pic' \) -exec rm {} +
-	rm -f music/*.bin
+	rm -f music/*.bin music/wave_data.asm
 	$(MAKE) clean -C tools/
 
 tidy:
@@ -123,5 +123,5 @@ MUSIC_BANKS := "45-512"
 music/%.bin: music/%.flac
 	tools/process_audio $< > $@
 
-#music/wave_data.asm: $(MUSIC_BINS)
-#	python tools/pack_audio.py $(MUSIC_BANKS) $^ > $@
+music/wave_data.asm: $(MUSIC_BINS)
+	python tools/pack_audio.py $(MUSIC_BANKS) $^ > $@
